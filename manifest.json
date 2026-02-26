@@ -1,0 +1,41 @@
+{
+  "name": "NutriFlow — Eat Smart, Live Well",
+  "short_name": "NutriFlow",
+  "description": "AI-powered personalized meal suggestions for a balanced diet",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#faf6f0",
+  "theme_color": "#c4612a",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["health", "food", "lifestyle"],
+  "shortcuts": [
+    {
+      "name": "Log Meal",
+      "short_name": "Log",
+      "description": "Quickly log what you ate",
+      "url": "/",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
