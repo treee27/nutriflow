@@ -5,9 +5,13 @@ from groq import Groq
 import os
 import json
 import re
-from dotenv import load_dotenv
 
-load_dotenv()
+# Only load .env locally — Railway uses real environment variables
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 
 app = FastAPI(title="NutriFlow API")
 
@@ -20,14 +24,17 @@ app.add_middleware(
 )
 
 # ── Groq client ───────────────────────────────────────────────────
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+api_key = os.environ.get("GROQ_API_KEY")
+if not api_key:
+    raise RuntimeError("GROQ_API_KEY environment variable is not set!")
+client = Groq(api_key=api_key)
 
 
 # ── Request schema ────────────────────────────────────────────────
 class MealRequest(BaseModel):
     food: str
     meal_time: str
-    diet_type: str = "Vegetarian"   # default: Vegetarian
+    diet_type: str = "Vegetarian"
 
 
 # ── Diet-specific prompt rules ────────────────────────────────────
@@ -46,9 +53,9 @@ DIET_RULES = {
     ),
     "Vegan": (
         "The user is STRICTLY VEGAN. "
-        "NEVER suggest any animal products — no meat, no fish, no eggs, no dairy (no milk, no paneer, no curd, no ghee, no cheese, no butter, no honey). "
-        "Use ONLY plant-based ingredients: tofu, tempeh, legumes, lentils, chickpeas, nuts, seeds, plant milks (almond/soy/oat), "
-        "nutritional yeast, and all vegetables and fruits. "
+        "NEVER suggest any animal products — no meat, no fish, no eggs, no dairy. "
+        "Use ONLY plant-based ingredients: tofu, tempeh, legumes, lentils, chickpeas, nuts, seeds, "
+        "plant milks, nutritional yeast, and all vegetables and fruits. "
         "Pay special attention to B12, iron, calcium, and omega-3 from plant sources."
     ),
 }
@@ -63,13 +70,18 @@ def extract_json(text: str) -> dict:
     return json.loads(match.group())
 
 
+# ── Health check ──────────────────────────────────────────────────
+@app.get("/")
+def root():
+    return {"status": "NutriFlow API is running 🌿"}
+
+
 # ── /suggest endpoint ─────────────────────────────────────────────
 @app.post("/suggest")
 async def suggest_meals(req: MealRequest):
     if not req.food.strip():
         raise HTTPException(status_code=400, detail="Please provide what you ate.")
 
-    # Validate diet_type
     if req.diet_type not in DIET_RULES:
         raise HTTPException(status_code=400, detail=f"Invalid diet_type. Choose from: {list(DIET_RULES.keys())}")
 
@@ -85,7 +97,7 @@ The person just had this meal:
 - Food Eaten: {req.food}
 - Diet Type : {req.diet_type}
 
-Now suggest what they should eat for their REMAINING meals of the day so their body gets
+Suggest what they should eat for their REMAINING meals of the day so their body gets
 complete nutrition — proteins, complex carbs, healthy fats, fiber, vitamins, and minerals.
 
 Respond ONLY with a valid JSON object. No markdown, no text outside the JSON:
@@ -97,7 +109,7 @@ Respond ONLY with a valid JSON object. No markdown, no text outside the JSON:
       "time": "Lunch",
       "emoji": "🍛",
       "title": "Meal name (1-4 words)",
-      "description": "2-3 sentences: what to eat and exactly why it helps. Be specific about ingredients.",
+      "description": "2-3 sentences: what to eat and exactly why it helps.",
       "nutrients": ["Protein", "Iron", "Vitamin C"],
       "highlightNutrient": "Protein"
     }}
@@ -109,15 +121,14 @@ Respond ONLY with a valid JSON object. No markdown, no text outside the JSON:
     "fiber":    70,
     "vitamins": 75
   }},
-  "healthTip": "A warm, practical health tip for a {req.diet_type} person (2-3 sentences)."
+  "healthTip": "A warm, practical health tip (2-3 sentences)."
 }}
 
 Rules:
 - Give 2-3 meal suggestions for meals AFTER {req.meal_time}
-- STRICTLY follow the {req.diet_type} diet rule — wrong ingredients are not acceptable
-- nutritionBalance values are 0-100 percentages showing how well the full day plan covers daily needs
-- Suggest real, commonly available Indian ingredients relevant to {req.diet_type} diet
-- Keep descriptions friendly, specific and practical
+- STRICTLY follow the {req.diet_type} diet rule
+- nutritionBalance values are 0-100 percentages
+- Suggest real commonly available Indian ingredients
 """
 
     try:
@@ -148,9 +159,3 @@ Rules:
         raise HTTPException(status_code=502, detail=f"Could not parse AI response: {e}")
     except Exception as e:
         raise HTTPException(status_code=502, detail=str(e))
-
-
-# ── Health check ──────────────────────────────────────────────────
-@app.get("/")
-def root():
-    return {"status": "NutriFlow API is running 🌿"}
