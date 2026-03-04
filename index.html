@@ -1,364 +1,600 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>NutriFlow — Eat Smart, Live Well</title>
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-<!-- PWA -->
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="manifest" href="/manifest.json"/>
 <meta name="theme-color" content="#c4612a"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
 <meta name="apple-mobile-web-app-title" content="NutriFlow"/>
-<link rel="apple-touch-icon" href="/icons/icon-192.png"/>
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"/>
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png"/>
 <style>
+/* ══════════════════════════════════════════════
+   DESIGN TOKENS
+══════════════════════════════════════════════ */
 :root {
-  --bg: #faf6f0;
-  --surface: #ffffff;
-  --surface2: #f3ede3;
-  --border: #e8ddd0;
-  --accent: #c4612a;
+  --bg:           #faf6f0;
+  --bg2:          #f3ede3;
+  --surface:      #ffffff;
+  --surface2:     #f3ede3;
+  --border:       #e8ddd0;
+  --accent:       #c4612a;
   --accent-light: #f5e6db;
-  --green: #4a7c59;
-  --green-light: #dff0e6;
-  --text: #2a1f14;
-  --muted: #8a7060;
-  --yellow: #d4a847;
-
-  /* Diet type colors */
-  --veg-color: #2d7a3a;
-  --veg-bg: #e8f5ea;
-  --veg-border: #a8d5b0;
-  --nonveg-color: #b33a1a;
-  --nonveg-bg: #fdecea;
-  --nonveg-border: #f0a898;
-  --vegan-color: #2a6b8a;
-  --vegan-bg: #e3f3fa;
-  --vegan-border: #90cce0;
+  --accent-dark:  #a04e20;
+  --green:        #4a7c59;
+  --green-light:  #dff0e6;
+  --text:         #2a1f14;
+  --text2:        #5a4a3a;
+  --muted:        #8a7060;
+  --yellow:       #d4a847;
+  --shadow:       0 2px 20px rgba(196,97,42,0.08);
+  --shadow-lg:    0 8px 40px rgba(196,97,42,0.15);
+  --radius:       20px;
+  --radius-sm:    12px;
+  --veg-color:    #2d7a3a; --veg-bg: #e8f5ea; --veg-border: #a8d5b0;
+  --nonveg-color: #b33a1a; --nonveg-bg: #fdecea; --nonveg-border: #f0a898;
+  --vegan-color:  #2a6b8a; --vegan-bg: #e3f3fa; --vegan-border: #90cce0;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+[data-theme="dark"] {
+  --bg:           #1a1410;
+  --bg2:          #231c16;
+  --surface:      #2a2018;
+  --surface2:     #332820;
+  --border:       #3d3028;
+  --accent-light: #3d2518;
+  --text:         #f0e8e0;
+  --text2:        #c0a890;
+  --muted:        #907060;
+  --shadow:       0 2px 20px rgba(0,0,0,0.3);
+  --shadow-lg:    0 8px 40px rgba(0,0,0,0.4);
+  --green-light:  #1a3025;
+  --veg-bg: #1a2e1c; --nonveg-bg: #2e1a18; --vegan-bg: #1a2530;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
 
 body {
   background: var(--bg);
   color: var(--text);
   font-family: 'Outfit', sans-serif;
   min-height: 100vh;
+  transition: background 0.3s, color 0.3s;
 }
 
-.top-bar {
-  height: 4px;
-  background: linear-gradient(90deg, var(--accent), var(--yellow), var(--green));
-}
+/* ══════════════════════════════════════════════
+   PAGES SYSTEM
+══════════════════════════════════════════════ */
+.page { display: none; min-height: 100vh; }
+.page.active { display: block; }
 
-header {
-  padding: 20px 40px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-}
-
-.logo {
-  font-family: 'Lora', serif;
-  font-size: 1.7rem;
-  font-weight: 600;
-  color: var(--accent);
-  letter-spacing: -0.02em;
-}
-.logo span { color: var(--green); }
-
-.header-subtitle {
-  font-size: 0.78rem;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-}
-
-/* Hero */
-.hero {
-  background: linear-gradient(135deg, #fdf4ec 0%, #f0f7f2 100%);
-  padding: 56px 40px 44px;
-  text-align: center;
-  border-bottom: 1px solid var(--border);
+/* ══════════════════════════════════════════════
+   LANDING PAGE
+══════════════════════════════════════════════ */
+#landingPage {
+  background: var(--bg);
   position: relative;
   overflow: hidden;
 }
-.hero::before {
-  content: '🥗';
-  position: absolute;
-  font-size: 180px;
-  opacity: 0.05;
-  top: -20px; right: -20px;
-  transform: rotate(-15deg);
+
+.landing-bg {
+  position: fixed;
+  inset: 0;
   pointer-events: none;
+  z-index: 0;
 }
-.hero::after {
-  content: '🌾';
-  position: absolute;
-  font-size: 140px;
-  opacity: 0.05;
-  bottom: -20px; left: 10px;
-  transform: rotate(10deg);
-  pointer-events: none;
-}
-.hero h1 {
-  font-family: 'Lora', serif;
-  font-size: clamp(2rem, 4vw, 3rem);
-  color: var(--text);
-  margin-bottom: 14px;
-  line-height: 1.2;
-}
-.hero h1 em { font-style: italic; color: var(--accent); }
-.hero p {
-  color: var(--muted);
-  font-size: 1rem;
-  max-width: 480px;
-  margin: 0 auto;
-  line-height: 1.7;
-}
-
-/* Diet Badge shown in hero (updates on select) */
-.hero-diet-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 18px;
-  padding: 6px 16px;
-  border-radius: 100px;
-  font-size: 0.82rem;
-  font-weight: 600;
-  background: var(--veg-bg);
-  color: var(--veg-color);
-  border: 1.5px solid var(--veg-border);
-  transition: all 0.3s;
-}
-.hero-diet-badge.nonveg { background: var(--nonveg-bg); color: var(--nonveg-color); border-color: var(--nonveg-border); }
-.hero-diet-badge.vegan  { background: var(--vegan-bg);  color: var(--vegan-color);  border-color: var(--vegan-border); }
-
-main {
-  max-width: 860px;
-  margin: 0 auto;
-  padding: 48px 24px;
-}
-
-/* Input Card */
-.input-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  padding: 36px;
-  margin-bottom: 28px;
-  box-shadow: 0 2px 20px rgba(196,97,42,0.06);
-  animation: fadeUp 0.6s ease both;
-}
-
-.section-label {
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--accent);
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-.section-title {
-  font-family: 'Lora', serif;
-  font-size: 1.35rem;
-  color: var(--text);
-  margin-bottom: 8px;
-}
-.section-desc {
-  font-size: 0.87rem;
-  color: var(--muted);
-  margin-bottom: 24px;
-  line-height: 1.6;
-}
-
-/* ── DIET TOGGLE ────────────────────────────────────────── */
-.diet-toggle-wrap {
-  margin-bottom: 24px;
-}
-
-.diet-toggle-label {
-  font-size: 0.82rem;
-  color: var(--muted);
-  font-weight: 500;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.diet-toggle-label::after {
-  content: 'Required';
-  font-size: 0.68rem;
-  background: #fff3cd;
-  color: #856404;
-  border: 1px solid #ffc107;
-  border-radius: 4px;
-  padding: 1px 7px;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-}
-
-.diet-options {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.diet-btn {
-  position: relative;
-  flex: 1;
-  min-width: 120px;
-  padding: 14px 16px;
-  border-radius: 14px;
-  border: 2px solid var(--border);
-  background: var(--surface2);
-  cursor: pointer;
-  transition: all 0.25s;
-  text-align: center;
-  font-family: 'Outfit', sans-serif;
-}
-
-.diet-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.07); }
-
-.diet-btn .diet-icon { font-size: 1.6rem; display: block; margin-bottom: 6px; }
-.diet-btn .diet-name { font-size: 0.9rem; font-weight: 600; color: var(--text); display: block; }
-.diet-btn .diet-desc { font-size: 0.72rem; color: var(--muted); margin-top: 3px; display: block; line-height: 1.4; }
-
-/* Veg active */
-.diet-btn.veg.active {
-  border-color: var(--veg-color);
-  background: var(--veg-bg);
-  box-shadow: 0 0 0 4px rgba(45,122,58,0.1);
-}
-.diet-btn.veg.active .diet-name { color: var(--veg-color); }
-
-/* Non-Veg active */
-.diet-btn.nonveg.active {
-  border-color: var(--nonveg-color);
-  background: var(--nonveg-bg);
-  box-shadow: 0 0 0 4px rgba(179,58,26,0.1);
-}
-.diet-btn.nonveg.active .diet-name { color: var(--nonveg-color); }
-
-/* Vegan active */
-.diet-btn.vegan.active {
-  border-color: var(--vegan-color);
-  background: var(--vegan-bg);
-  box-shadow: 0 0 0 4px rgba(42,107,138,0.1);
-}
-.diet-btn.vegan.active .diet-name { color: var(--vegan-color); }
-
-/* Checkmark on active */
-.diet-btn::after {
+.landing-bg::before {
   content: '';
   position: absolute;
-  top: 10px; right: 10px;
-  width: 18px; height: 18px;
-  border-radius: 50%;
-  border: 2px solid var(--border);
-  background: white;
-  transition: all 0.2s;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(196,97,42,0.08) 0%, transparent 70%);
+  top: -100px; right: -100px;
+  animation: floatBg 8s ease-in-out infinite;
 }
-.diet-btn.active::after {
-  content: '✓';
-  font-size: 0.7rem;
-  font-weight: 700;
+.landing-bg::after {
+  content: '';
+  position: absolute;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(74,124,89,0.07) 0%, transparent 70%);
+  bottom: 100px; left: -50px;
+  animation: floatBg 10s ease-in-out infinite reverse;
+}
+@keyframes floatBg {
+  0%,100% { transform: translate(0,0) scale(1); }
+  50%      { transform: translate(20px,-20px) scale(1.05); }
+}
+
+.landing-nav {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 48px;
+}
+.nav-logo {
+  font-family: 'Lora', serif;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-logo span { color: var(--green); }
+
+.nav-actions { display: flex; align-items: center; gap: 16px; }
+
+.btn-dark-toggle {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-}
-.diet-btn.veg.active::after    { background: var(--veg-color);    border-color: var(--veg-color); }
-.diet-btn.nonveg.active::after { background: var(--nonveg-color); border-color: var(--nonveg-color); }
-.diet-btn.vegan.active::after  { background: var(--vegan-color);  border-color: var(--vegan-color); }
-
-/* Diet info banner (shows tips based on selection) */
-.diet-info-banner {
-  margin-top: 12px;
-  padding: 10px 16px;
-  border-radius: 10px;
-  font-size: 0.82rem;
-  line-height: 1.5;
-  display: none;
-  animation: fadeUp 0.3s ease;
-}
-.diet-info-banner.active { display: block; }
-.diet-info-banner.veg    { background: var(--veg-bg);    color: var(--veg-color);    border: 1px solid var(--veg-border); }
-.diet-info-banner.nonveg { background: var(--nonveg-bg); color: var(--nonveg-color); border: 1px solid var(--nonveg-border); }
-.diet-info-banner.vegan  { background: var(--vegan-bg);  color: var(--vegan-color);  border: 1px solid var(--vegan-border); }
-
-/* ── MEAL TIME SELECTOR ────────────────────────────────── */
-.meal-time-wrap { margin-bottom: 22px; }
-.meal-time-label { font-size: 0.82rem; color: var(--muted); font-weight: 500; margin-bottom: 10px; }
-.meal-time-btns  { display: flex; gap: 8px; flex-wrap: wrap; }
-
-.time-btn {
-  padding: 8px 18px;
-  border-radius: 100px;
-  border: 1.5px solid var(--border);
-  background: transparent;
-  color: var(--muted);
-  font-family: 'Outfit', sans-serif;
-  font-size: 0.83rem;
-  font-weight: 500;
-  cursor: pointer;
+  font-size: 1.1rem;
   transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 6px;
 }
-.time-btn:hover  { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
-.time-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
+.btn-dark-toggle:hover { border-color: var(--accent); transform: rotate(20deg); }
 
-/* ── TEXTAREA ───────────────────────────────────────────── */
-.textarea-wrap { position: relative; margin-bottom: 16px; }
-
-textarea {
-  width: 100%;
-  background: var(--surface2);
-  border: 1.5px solid var(--border);
-  border-radius: 14px;
-  padding: 16px 20px;
-  color: var(--text);
-  font-family: 'Outfit', sans-serif;
-  font-size: 0.95rem;
-  resize: none;
-  height: 110px;
-  transition: border-color 0.25s, box-shadow 0.25s;
-  outline: none;
-  line-height: 1.7;
-}
-textarea::placeholder { color: #bfab99; }
-textarea:focus {
-  border-color: var(--accent);
-  background: white;
-  box-shadow: 0 0 0 4px rgba(196,97,42,0.08);
-}
-
-.char-count {
-  position: absolute;
-  bottom: 10px; right: 14px;
-  font-size: 0.73rem;
-  color: var(--muted);
-  opacity: 0.6;
-}
-
-/* ── BUTTONS ────────────────────────────────────────────── */
-.buttons-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-
-.btn-suggest {
-  padding: 13px 30px;
+.btn-signin-nav {
+  padding: 10px 24px;
   background: var(--accent);
   color: white;
   border: none;
   border-radius: 100px;
   font-family: 'Outfit', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.btn-signin-nav:hover { background: var(--accent-dark); transform: translateY(-1px); box-shadow: var(--shadow-lg); }
+
+/* Hero */
+.landing-hero {
+  position: relative;
+  z-index: 5;
+  text-align: center;
+  padding: 80px 24px 60px;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: var(--accent-light);
+  border: 1px solid rgba(196,97,42,0.2);
+  border-radius: 100px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 28px;
+  animation: fadeUp 0.6s ease both;
+}
+
+.landing-hero h1 {
+  font-family: 'Lora', serif;
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  line-height: 1.15;
+  color: var(--text);
+  margin-bottom: 20px;
+  animation: fadeUp 0.6s 0.1s ease both;
+}
+.landing-hero h1 em { color: var(--accent); font-style: italic; }
+.landing-hero h1 strong { color: var(--green); font-style: normal; }
+
+.landing-hero p {
+  font-size: 1.05rem;
+  color: var(--muted);
+  line-height: 1.8;
+  max-width: 520px;
+  margin: 0 auto 40px;
+  animation: fadeUp 0.6s 0.2s ease both;
+}
+
+.hero-cta {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+  animation: fadeUp 0.6s 0.3s ease both;
+}
+
+.btn-google {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 28px;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 100px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.25s;
+  box-shadow: var(--shadow);
+}
+.btn-google:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+.btn-google svg { width: 22px; height: 22px; flex-shrink: 0; }
+
+/* Feature pills */
+.feature-pills {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 48px;
+  animation: fadeUp 0.6s 0.4s ease both;
+}
+.pill-feat {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-size: 0.82rem;
+  color: var(--text2);
+  font-weight: 500;
+  box-shadow: var(--shadow);
+}
+
+/* Stats row */
+.stats-row {
+  display: flex;
+  gap: 0;
+  justify-content: center;
+  margin: 64px auto 0;
+  max-width: 600px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  animation: fadeUp 0.6s 0.5s ease both;
+}
+.stat-item {
+  flex: 1;
+  padding: 24px 16px;
+  text-align: center;
+  border-right: 1px solid var(--border);
+}
+.stat-item:last-child { border-right: none; }
+.stat-num {
+  font-family: 'Lora', serif;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--accent);
+  display: block;
+}
+.stat-label { font-size: 0.75rem; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* ══════════════════════════════════════════════
+   APP SHELL (after login)
+══════════════════════════════════════════════ */
+#appPage { display: none; flex-direction: column; min-height: 100vh; }
+#appPage.active { display: flex; }
+
+/* Top nav bar */
+.app-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  box-shadow: var(--shadow);
+}
+.app-logo {
+  font-family: 'Lora', serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+.app-logo span { color: var(--green); }
+
+.navbar-right { display: flex; align-items: center; gap: 12px; }
+
+.user-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  object-fit: cover;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.user-avatar:hover { transform: scale(1.08); }
+
+.user-name-nav {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text2);
+}
+
+/* Bottom tab bar */
+.tab-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 100;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  display: flex;
+  padding: 8px 0 env(safe-area-inset-bottom, 8px);
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+}
+.tab-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  background: none;
+  color: var(--muted);
+  font-family: 'Outfit', sans-serif;
+}
+.tab-item .tab-icon { font-size: 1.3rem; transition: transform 0.2s; }
+.tab-item .tab-label { font-size: 0.68rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; }
+.tab-item.active { color: var(--accent); }
+.tab-item.active .tab-icon { transform: translateY(-2px); }
+
+/* App content area */
+.app-content {
+  flex: 1;
+  padding-bottom: 80px;
+}
+
+/* Tab panels */
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ══════════════════════════════════════════════
+   DASHBOARD TAB
+══════════════════════════════════════════════ */
+.dashboard-wrap {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+/* Greeting banner */
+.greeting-banner {
+  background: linear-gradient(135deg, var(--accent) 0%, #d4723a 50%, var(--green) 100%);
+  border-radius: var(--radius);
+  padding: 28px 32px;
+  color: white;
+  margin-bottom: 28px;
+  position: relative;
+  overflow: hidden;
+  animation: fadeUp 0.5s ease both;
+}
+.greeting-banner::after {
+  content: '🌿';
+  position: absolute;
+  font-size: 5rem;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.2;
+}
+.greeting-banner h2 { font-family: 'Lora', serif; font-size: 1.5rem; margin-bottom: 6px; }
+.greeting-banner p  { font-size: 0.88rem; opacity: 0.85; }
+
+/* Quick stats */
+.quick-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 20px 16px;
+  text-align: center;
+  box-shadow: var(--shadow);
+  animation: fadeUp 0.5s ease both;
+}
+.stat-card .s-icon { font-size: 1.6rem; margin-bottom: 8px; }
+.stat-card .s-val  { font-family: 'Lora', serif; font-size: 1.5rem; color: var(--accent); font-weight: 600; }
+.stat-card .s-lbl  { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; }
+
+/* Streak bar */
+.streak-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+  animation: fadeUp 0.5s 0.1s ease both;
+}
+.streak-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.streak-title  { font-family: 'Lora', serif; font-size: 1.1rem; color: var(--text); }
+.streak-count  { font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+
+.week-dots { display: flex; gap: 8px; }
+.week-dot {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.week-dot .dot {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--surface2);
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  transition: all 0.3s;
+}
+.week-dot.logged .dot { background: var(--accent); border-color: var(--accent); color: white; }
+.week-dot.today  .dot { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+.week-dot .day-lbl { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+/* Weekly nutrition summary */
+.nutrition-summary {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px 28px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+  animation: fadeUp 0.5s 0.15s ease both;
+}
+.summary-title {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  font-weight: 600;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.summary-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.nutrition-bars { display: grid; gap: 14px; }
+.bar-row { display: grid; grid-template-columns: 100px 1fr 50px; align-items: center; gap: 14px; }
+.bar-label { font-size: 0.82rem; color: var(--text); font-weight: 500; }
+.bar-track { height: 8px; background: var(--surface2); border-radius: 100px; overflow: hidden; }
+.bar-fill  { height: 100%; border-radius: 100px; width: 0%; transition: width 1.2s cubic-bezier(0.34,1.56,0.64,1); }
+.bar-fill.protein  { background: linear-gradient(90deg, #60a5fa, #2563eb); }
+.bar-fill.carbs    { background: linear-gradient(90deg, var(--yellow), #b7860f); }
+.bar-fill.fat      { background: linear-gradient(90deg, #f472b6, #be185d); }
+.bar-fill.fiber    { background: linear-gradient(90deg, var(--green), #16a34a); }
+.bar-fill.vitamins { background: linear-gradient(90deg, #a78bfa, #7c3aed); }
+.bar-val { font-size: 0.8rem; color: var(--muted); text-align: right; font-weight: 500; }
+
+/* ══════════════════════════════════════════════
+   LOG MEAL TAB
+══════════════════════════════════════════════ */
+.log-wrap {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+.input-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px;
+  box-shadow: var(--shadow);
+  animation: fadeUp 0.5s ease both;
+  margin-bottom: 24px;
+}
+
+.card-eyebrow { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); font-weight: 600; margin-bottom: 6px; }
+.card-title   { font-family: 'Lora', serif; font-size: 1.3rem; color: var(--text); margin-bottom: 6px; }
+.card-desc    { font-size: 0.85rem; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
+
+/* Diet toggle */
+.diet-toggle-label { font-size: 0.82rem; color: var(--muted); font-weight: 500; margin-bottom: 10px; }
+.diet-options { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+
+.diet-btn {
+  position: relative;
+  flex: 1; min-width: 110px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--border);
+  background: var(--surface2);
+  cursor: pointer;
+  transition: all 0.25s;
+  text-align: center;
+  font-family: 'Outfit', sans-serif;
+}
+.diet-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.diet-btn .diet-icon { font-size: 1.4rem; display: block; margin-bottom: 5px; }
+.diet-btn .diet-name { font-size: 0.85rem; font-weight: 600; color: var(--text); display: block; }
+.diet-btn .diet-desc { font-size: 0.68rem; color: var(--muted); margin-top: 2px; display: block; }
+
+.diet-btn.veg.active    { border-color: var(--veg-color);    background: var(--veg-bg);    box-shadow: 0 0 0 3px rgba(45,122,58,0.1); }
+.diet-btn.nonveg.active { border-color: var(--nonveg-color); background: var(--nonveg-bg); box-shadow: 0 0 0 3px rgba(179,58,26,0.1); }
+.diet-btn.vegan.active  { border-color: var(--vegan-color);  background: var(--vegan-bg);  box-shadow: 0 0 0 3px rgba(42,107,138,0.1); }
+.diet-btn.veg.active .diet-name    { color: var(--veg-color); }
+.diet-btn.nonveg.active .diet-name { color: var(--nonveg-color); }
+.diet-btn.vegan.active .diet-name  { color: var(--vegan-color); }
+
+/* Meal time buttons */
+.time-label { font-size: 0.82rem; color: var(--muted); font-weight: 500; margin-bottom: 10px; }
+.meal-time-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+.time-btn {
+  padding: 8px 16px;
+  border-radius: 100px;
+  border: 1.5px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.time-btn:hover  { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+.time-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
+
+/* Textarea */
+.textarea-wrap { position: relative; margin-bottom: 16px; }
+textarea {
+  width: 100%;
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 18px;
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
   font-size: 0.92rem;
+  resize: none;
+  height: 100px;
+  transition: border-color 0.25s, box-shadow 0.25s;
+  outline: none;
+  line-height: 1.7;
+}
+textarea::placeholder { color: var(--muted); opacity: 0.6; }
+textarea:focus { border-color: var(--accent); background: var(--surface); box-shadow: 0 0 0 4px rgba(196,97,42,0.08); }
+.char-count { position: absolute; bottom: 10px; right: 14px; font-size: 0.72rem; color: var(--muted); opacity: 0.6; }
+
+/* Buttons row */
+.buttons-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+.btn-primary {
+  padding: 12px 26px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 100px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.25s;
@@ -366,13 +602,12 @@ textarea:focus {
   align-items: center;
   gap: 8px;
 }
-.btn-suggest:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(196,97,42,0.35); background: #b5561f; }
-.btn-suggest:active { transform: translateY(0); }
-.btn-suggest:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn-primary:hover    { background: var(--accent-dark); transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
 
-.btn-voice {
-  padding: 13px 22px;
-  background: white;
+.btn-secondary {
+  padding: 12px 20px;
+  background: var(--surface);
   color: var(--text);
   border: 1.5px solid var(--border);
   border-radius: 100px;
@@ -380,13 +615,13 @@ textarea:focus {
   font-size: 0.88rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.25s;
+  transition: all 0.2s;
   display: flex;
   align-items: center;
   gap: 8px;
 }
-.btn-voice:hover { border-color: var(--green); color: var(--green); background: var(--green-light); }
-.btn-voice.recording { border-color: #e53e3e; color: #e53e3e; background: #fff5f5; animation: pulse-red 1.5s infinite; }
+.btn-secondary:hover { border-color: var(--green); color: var(--green); background: var(--green-light); }
+.btn-secondary.recording { border-color: #e53e3e; color: #e53e3e; animation: pulse-red 1.5s infinite; }
 
 @keyframes pulse-red {
   0%,100% { box-shadow: 0 0 0 0 rgba(229,62,62,0.35); }
@@ -397,9 +632,9 @@ textarea:focus {
   display: none;
   align-items: center;
   gap: 6px;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: #e53e3e;
-  padding: 6px 14px;
+  padding: 5px 12px;
   background: #fff5f5;
   border-radius: 100px;
   border: 1px solid rgba(229,62,62,0.3);
@@ -408,22 +643,12 @@ textarea:focus {
 .rec-dot { width: 7px; height: 7px; border-radius: 50%; background: #e53e3e; animation: blink 1s infinite; }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
 
-/* ── ERROR ──────────────────────────────────────────────── */
-.error-box {
-  display: none;
-  background: #fff5f5;
-  border: 1px solid #fed7d7;
-  border-radius: 12px;
-  padding: 14px 18px;
-  color: #c53030;
-  font-size: 0.87rem;
-  margin-bottom: 20px;
-  line-height: 1.5;
-}
+/* Error box */
+.error-box { display: none; background: #fff5f5; border: 1px solid #fed7d7; border-radius: var(--radius-sm); padding: 12px 16px; color: #c53030; font-size: 0.85rem; margin-bottom: 16px; }
 .error-box.active { display: block; }
 
-/* ── LOADER ─────────────────────────────────────────────── */
-.loader-wrap { display: none; text-align: center; padding: 60px 20px; animation: fadeUp 0.4s ease; }
+/* Loader */
+.loader-wrap { display: none; text-align: center; padding: 60px 20px; }
 .loader-wrap.active { display: block; }
 .loader-icon { font-size: 2.5rem; margin-bottom: 16px; animation: spin-bounce 2s infinite; }
 @keyframes spin-bounce {
@@ -431,492 +656,713 @@ textarea:focus {
   25%      { transform: translateY(-8px) rotate(10deg); }
   75%      { transform: translateY(-4px) rotate(-5deg); }
 }
-.loader-dots { display: flex; justify-content: center; gap: 8px; margin: 16px auto; }
+.loader-dots { display: flex; justify-content: center; gap: 8px; margin: 12px auto; }
 .loader-dots span { width: 9px; height: 9px; background: var(--accent); border-radius: 50%; animation: bounce 1.3s infinite ease-in-out both; }
 .loader-dots span:nth-child(1) { animation-delay: -0.32s; }
 .loader-dots span:nth-child(2) { animation-delay: -0.16s; }
 @keyframes bounce { 0%,80%,100%{transform:scale(0);opacity:0.4} 40%{transform:scale(1);opacity:1} }
-.loader-text { color: var(--muted); font-size: 0.9rem; }
-.loader-text strong { color: var(--accent); }
+.loader-text { color: var(--muted); font-size: 0.88rem; }
 
-/* ── RESULTS ────────────────────────────────────────────── */
-.results-wrap { display: none; animation: fadeUp 0.6s ease both; }
+/* Results */
+.results-wrap { display: none; animation: fadeUp 0.5s ease both; }
 .results-wrap.active { display: block; }
 
-.results-header { margin-bottom: 28px; }
-.results-header .sub { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--green); font-weight: 600; margin-bottom: 6px; }
-.results-header h2 { font-family: 'Lora', serif; font-size: 1.7rem; color: var(--text); line-height: 1.2; }
+.results-header { margin-bottom: 20px; }
+.results-header .sub { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--green); font-weight: 600; margin-bottom: 6px; }
+.results-header h2  { font-family: 'Lora', serif; font-size: 1.5rem; color: var(--text); }
 .results-header h2 em { font-style: italic; color: var(--accent); }
 
-/* Diet tag shown in results */
 .results-diet-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 8px;
-  padding: 5px 14px;
-  border-radius: 100px;
-  font-size: 0.78rem;
-  font-weight: 600;
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 8px; padding: 4px 14px; border-radius: 100px;
+  font-size: 0.76rem; font-weight: 600;
 }
 .results-diet-tag.veg    { background: var(--veg-bg);    color: var(--veg-color);    border: 1.5px solid var(--veg-border); }
 .results-diet-tag.nonveg { background: var(--nonveg-bg); color: var(--nonveg-color); border: 1.5px solid var(--nonveg-border); }
 .results-diet-tag.vegan  { background: var(--vegan-bg);  color: var(--vegan-color);  border: 1.5px solid var(--vegan-border); }
 
-/* ── MEAL CARDS ─────────────────────────────────────────── */
-.meal-cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  margin-bottom: 28px;
-}
-
+/* Meal cards */
+.meal-cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap: 16px; margin-bottom: 24px; }
 .meal-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 26px;
+  border-radius: var(--radius);
+  padding: 22px;
   position: relative;
   overflow: hidden;
   transition: transform 0.2s, box-shadow 0.2s;
   animation: fadeUp 0.5s ease both;
 }
-.meal-card:hover { transform: translateY(-3px); box-shadow: 0 12px 36px rgba(0,0,0,0.09); }
+.meal-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
 .meal-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; }
 .meal-card.lunch::after   { background: linear-gradient(90deg, var(--yellow), var(--accent)); }
 .meal-card.evening::after { background: linear-gradient(90deg, var(--green), #7dbf8f); }
-.meal-card.dinner::after  { background: linear-gradient(90deg, #7b68ee, #4a7c59); }
+.meal-card.dinner::after  { background: linear-gradient(90deg, #7b68ee, var(--green)); }
 .meal-card.snack::after   { background: linear-gradient(90deg, var(--accent), var(--yellow)); }
 
 .card-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 4px 12px;
-  border-radius: 100px;
-  font-size: 0.72rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 14px;
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 12px; border-radius: 100px;
+  font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px;
 }
 .card-badge.lunch   { background: rgba(212,168,71,0.15); color: #a07a1a; }
 .card-badge.evening { background: var(--green-light); color: var(--green); }
 .card-badge.dinner  { background: rgba(123,104,238,0.12); color: #6b5bc9; }
 .card-badge.snack   { background: var(--accent-light); color: var(--accent); }
 
-/* Diet dot on card */
-.diet-dot {
-  display: inline-block;
-  width: 10px; height: 10px;
-  border-radius: 2px;
-  margin-right: 4px;
-  vertical-align: middle;
-}
-.diet-dot.veg    { background: var(--veg-color);    border: 1.5px solid var(--veg-color); }
-.diet-dot.nonveg { background: var(--nonveg-color); border: 1.5px solid var(--nonveg-color); }
-.diet-dot.vegan  { background: var(--vegan-color);  border: 1.5px solid var(--vegan-color); }
-
-.card-emoji { font-size: 2rem; margin-bottom: 10px; display: block; }
-.card-title { font-family: 'Lora', serif; font-size: 1.1rem; color: var(--text); margin-bottom: 8px; line-height: 1.3; }
-.card-desc  { font-size: 0.83rem; color: var(--muted); line-height: 1.65; margin-bottom: 16px; }
-
-.nutrient-pills { display: flex; flex-wrap: wrap; gap: 6px; }
-.pill {
-  padding: 3px 10px;
-  border-radius: 100px;
-  font-size: 0.73rem;
-  font-weight: 500;
-  background: var(--surface2);
-  color: var(--muted);
-  border: 1px solid var(--border);
-}
+.card-emoji { font-size: 1.8rem; margin-bottom: 8px; display: block; }
+.card-title { font-family: 'Lora', serif; font-size: 1rem; color: var(--text); margin-bottom: 6px; }
+.card-desc  { font-size: 0.8rem; color: var(--muted); line-height: 1.65; margin-bottom: 14px; }
+.nutrient-pills { display: flex; flex-wrap: wrap; gap: 5px; }
+.pill { padding: 3px 10px; border-radius: 100px; font-size: 0.7rem; font-weight: 500; background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
 .pill.highlight { background: var(--green-light); border-color: rgba(74,124,89,0.2); color: var(--green); }
 
-/* ── NUTRITION OVERVIEW ─────────────────────────────────── */
-.nutrition-overview {
+/* Tips box */
+.tips-box {
+  background: linear-gradient(135deg, var(--green-light), var(--accent-light));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 20px;
+}
+.tips-box .tips-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--green); font-weight: 600; margin-bottom: 8px; }
+.tips-box p { font-size: 0.88rem; color: var(--text); line-height: 1.7; }
+
+.btn-reset { padding: 10px 22px; background: transparent; border: 1.5px solid var(--border); border-radius: 100px; color: var(--muted); font-family: 'Outfit', sans-serif; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; }
+.btn-reset:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ══════════════════════════════════════════════
+   HISTORY TAB
+══════════════════════════════════════════════ */
+.history-wrap { max-width: 860px; margin: 0 auto; padding: 32px 24px; }
+
+.history-title { font-family: 'Lora', serif; font-size: 1.6rem; color: var(--text); margin-bottom: 6px; }
+.history-subtitle { font-size: 0.85rem; color: var(--muted); margin-bottom: 32px; }
+
+/* Week selector */
+.week-selector {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 28px;
-  margin-bottom: 24px;
-  animation: fadeUp 0.5s 0.1s ease both;
+  border-radius: var(--radius-sm);
+  padding: 12px 20px;
+  box-shadow: var(--shadow);
 }
-.overview-title {
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--muted);
+.week-nav-btn {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: var(--surface2);
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  color: var(--text);
+}
+.week-nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+.week-label { flex: 1; text-align: center; font-size: 0.88rem; font-weight: 600; color: var(--text); }
+
+/* Calendar grid */
+.history-calendar { display: grid; gap: 16px; margin-bottom: 32px; }
+
+.history-day-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  animation: fadeUp 0.4s ease both;
+}
+
+.day-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+}
+.day-name { font-weight: 600; font-size: 0.9rem; color: var(--text); }
+.day-date { font-size: 0.78rem; color: var(--muted); }
+.day-badge {
+  font-size: 0.7rem;
+  padding: 3px 10px;
+  border-radius: 100px;
   font-weight: 600;
+}
+.day-badge.logged  { background: var(--green-light); color: var(--green); }
+.day-badge.missed  { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+.day-badge.today   { background: var(--accent-light); color: var(--accent); }
+
+.day-meals-list { padding: 16px 20px; display: grid; gap: 10px; }
+
+.day-meal-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  transition: transform 0.2s;
+}
+.day-meal-item:hover { transform: translateX(4px); }
+.meal-item-emoji { font-size: 1.5rem; flex-shrink: 0; }
+.meal-item-info { flex: 1; }
+.meal-item-time { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); font-weight: 600; margin-bottom: 2px; }
+.meal-item-food { font-size: 0.85rem; color: var(--text); font-weight: 500; }
+.meal-item-diet {
+  font-size: 0.68rem;
+  padding: 2px 8px;
+  border-radius: 100px;
+  font-weight: 600;
+  margin-top: 4px;
+  display: inline-block;
+}
+.meal-item-diet.veg    { background: var(--veg-bg); color: var(--veg-color); }
+.meal-item-diet.nonveg { background: var(--nonveg-bg); color: var(--nonveg-color); }
+.meal-item-diet.vegan  { background: var(--vegan-bg); color: var(--vegan-color); }
+
+.no-meals-placeholder {
+  text-align: center;
+  padding: 20px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+/* ══════════════════════════════════════════════
+   PROFILE TAB
+══════════════════════════════════════════════ */
+.profile-wrap { max-width: 600px; margin: 0 auto; padding: 32px 24px; }
+
+.profile-hero {
+  background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px;
+  text-align: center;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow);
+  animation: fadeUp 0.5s ease both;
+}
+.profile-avatar-wrap { position: relative; display: inline-block; margin-bottom: 16px; }
+.profile-avatar {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  border: 3px solid var(--accent);
+  object-fit: cover;
+  box-shadow: 0 4px 16px rgba(196,97,42,0.2);
+}
+.profile-name  { font-family: 'Lora', serif; font-size: 1.4rem; color: var(--text); margin-bottom: 4px; }
+.profile-email { font-size: 0.82rem; color: var(--muted); }
+.profile-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 5px 14px;
+  background: var(--accent-light);
+  color: var(--accent);
+  border-radius: 100px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.profile-form-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  box-shadow: var(--shadow);
+  animation: fadeUp 0.5s 0.1s ease both;
+  margin-bottom: 20px;
+}
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group label { font-size: 0.8rem; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.06em; }
+.form-group input, .form-group select {
+  padding: 10px 14px;
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.form-group input:focus, .form-group select:focus { border-color: var(--accent); background: var(--surface); }
+.form-group select option { background: var(--surface); }
+
+.bmi-display {
+  background: var(--accent-light);
+  border: 1px solid rgba(196,97,42,0.2);
+  border-radius: var(--radius-sm);
+  padding: 14px 18px;
   margin-bottom: 20px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
 }
-.overview-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.bmi-label { font-size: 0.82rem; color: var(--accent); font-weight: 600; }
+.bmi-value { font-family: 'Lora', serif; font-size: 1.3rem; color: var(--accent); }
+.bmi-category { font-size: 0.75rem; color: var(--muted); }
 
-.nutrition-bars { display: grid; gap: 14px; }
-.bar-row { display: grid; grid-template-columns: 100px 1fr 55px; align-items: center; gap: 14px; }
-.bar-label { font-size: 0.82rem; color: var(--text); font-weight: 500; }
-.bar-track { height: 7px; background: var(--surface2); border-radius: 100px; overflow: hidden; }
-.bar-fill { height: 100%; border-radius: 100px; width: 0%; transition: width 1.2s cubic-bezier(0.34,1.56,0.64,1); }
-.bar-fill.protein { background: linear-gradient(90deg, #60a5fa, #2563eb); }
-.bar-fill.carbs   { background: linear-gradient(90deg, var(--yellow), #b7860f); }
-.bar-fill.fat     { background: linear-gradient(90deg, #f472b6, #be185d); }
-.bar-fill.fiber   { background: linear-gradient(90deg, var(--green), #16a34a); }
-.bar-fill.vitamins{ background: linear-gradient(90deg, #a78bfa, #7c3aed); }
-.bar-val { font-size: 0.8rem; color: var(--muted); text-align: right; font-weight: 500; }
-
-/* ── TIPS BOX ───────────────────────────────────────────── */
-.tips-box {
-  background: linear-gradient(135deg, #f0f7f2, #fdf4ec);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 24px 28px;
-  margin-bottom: 24px;
-  animation: fadeUp 0.5s 0.15s ease both;
-}
-.tips-box .tips-label { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--green); font-weight: 600; margin-bottom: 10px; }
-.tips-box p { font-size: 0.9rem; color: var(--text); line-height: 1.7; }
-
-/* ── HISTORY ────────────────────────────────────────────── */
-.history-section { margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--border); }
-.history-section h3 { font-family: 'Lora', serif; font-size: 1.1rem; color: var(--muted); margin-bottom: 14px; font-weight: 400; font-style: italic; }
-.history-list { display: grid; gap: 6px; }
-.history-item {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  padding: 11px 16px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: background 0.2s;
-  border: 1px solid transparent;
-}
-.history-item:hover { background: var(--surface); border-color: var(--border); }
-.history-time { font-size: 0.73rem; color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; min-width: 65px; }
-.history-diet-pill {
-  font-size: 0.68rem;
-  font-weight: 600;
-  padding: 2px 8px;
+.btn-save-profile {
+  width: 100%;
+  padding: 13px;
+  background: var(--green);
+  color: white;
+  border: none;
   border-radius: 100px;
-  white-space: nowrap;
-}
-.history-diet-pill.veg    { background: var(--veg-bg);    color: var(--veg-color); }
-.history-diet-pill.nonveg { background: var(--nonveg-bg); color: var(--nonveg-color); }
-.history-diet-pill.vegan  { background: var(--vegan-bg);  color: var(--vegan-color); }
-.history-text  { font-size: 0.85rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.history-arrow { margin-left: auto; color: var(--border); font-size: 0.8rem; }
-
-.btn-reset {
-  padding: 11px 24px;
-  background: transparent;
-  border: 1.5px solid var(--border);
-  border-radius: 100px;
-  color: var(--muted);
   font-family: 'Outfit', sans-serif;
-  font-size: 0.87rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.btn-save-profile:hover { background: #3a6448; transform: translateY(-1px); box-shadow: var(--shadow-lg); }
+
+.btn-signout {
+  width: 100%;
+  padding: 11px;
+  background: transparent;
+  border: 1.5px solid #fed7d7;
+  color: #c53030;
+  border-radius: 100px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.88rem;
   cursor: pointer;
   transition: all 0.2s;
-  margin-top: 8px;
+  margin-top: 12px;
 }
-.btn-reset:hover { border-color: var(--accent); color: var(--accent); }
+.btn-signout:hover { background: #fff5f5; }
 
+/* ══════════════════════════════════════════════
+   REMINDER CARD
+══════════════════════════════════════════════ */
+.reminder-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 28px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+  animation: fadeUp 0.5s 0.2s ease both;
+}
+.reminder-toggle-row { display: flex; align-items: center; justify-content: space-between; }
+.reminder-toggle-info strong { font-size: 0.88rem; color: var(--text); display: block; }
+.reminder-toggle-info span   { font-size: 0.76rem; color: var(--muted); }
+.toggle-switch { position: relative; width: 46px; height: 25px; flex-shrink: 0; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider { position: absolute; inset: 0; background: var(--border); border-radius: 100px; cursor: pointer; transition: background 0.25s; }
+.toggle-slider::before { content: ''; position: absolute; width: 19px; height: 19px; left: 3px; top: 3px; background: white; border-radius: 50%; transition: transform 0.25s; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+.toggle-switch input:checked + .toggle-slider { background: var(--green); }
+.toggle-switch input:checked + .toggle-slider::before { transform: translateX(21px); }
+
+/* ══════════════════════════════════════════════
+   TOAST + PWA BANNER
+══════════════════════════════════════════════ */
+.notif-toast {
+  position: fixed; top: 24px; right: 24px;
+  background: var(--text); color: var(--bg);
+  padding: 14px 18px; border-radius: var(--radius-sm);
+  font-size: 0.88rem; box-shadow: var(--shadow-lg);
+  z-index: 9999; display: none; max-width: 300px; line-height: 1.5;
+}
+.notif-toast.active { display: block; animation: slideInRight 0.4s ease; }
+.notif-toast strong { display: block; margin-bottom: 3px; }
+
+.pwa-banner {
+  display: none;
+  position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
+  background: var(--text); color: var(--bg);
+  border-radius: var(--radius-sm); padding: 16px 20px;
+  box-shadow: var(--shadow-lg); z-index: 1000;
+  max-width: 340px; width: calc(100% - 40px);
+  gap: 12px;
+}
+.pwa-banner.active { display: flex; align-items: center; animation: slideUp 0.4s ease; }
+.pwa-banner-text { flex: 1; }
+.pwa-banner-text strong { font-size: 0.88rem; display: block; margin-bottom: 2px; }
+.pwa-banner-text span   { font-size: 0.76rem; opacity: 0.7; }
+.pwa-banner-btns { display: flex; gap: 8px; flex-shrink: 0; }
+.btn-install { padding: 7px 14px; background: var(--accent); color: white; border: none; border-radius: 100px; font-family: 'Outfit', sans-serif; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+.btn-dismiss-pwa { padding: 7px 10px; background: transparent; color: var(--bg); border: 1px solid rgba(255,255,255,0.3); border-radius: 100px; font-family: 'Outfit', sans-serif; font-size: 0.8rem; cursor: pointer; }
+
+/* ══════════════════════════════════════════════
+   ANIMATIONS + UTILS
+══════════════════════════════════════════════ */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-
-footer {
-  text-align: center;
-  padding: 24px;
-  border-top: 1px solid var(--border);
-  font-size: 0.8rem;
-  color: var(--muted);
-}
-
-@media (max-width: 600px) {
-  header { padding: 16px 20px; }
-  .hero  { padding: 44px 20px 36px; }
-  main   { padding: 32px 16px; }
-  .input-card { padding: 24px 20px; }
-  .diet-options { flex-direction: column; }
-  .diet-btn { min-width: unset; }
-  .bar-row { grid-template-columns: 80px 1fr 45px; gap: 10px; }
-}
-
-/* ── PWA INSTALL BANNER ─────────────────────────────────── */
-.pwa-banner {
-  display: none;
-  position: fixed;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--text);
-  color: white;
-  border-radius: 16px;
-  padding: 16px 20px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
-  z-index: 1000;
-  max-width: 360px;
-  width: calc(100% - 40px);
-  animation: slideUp 0.4s ease;
-  gap: 12px;
-}
-.pwa-banner.active { display: flex; align-items: center; }
-.pwa-banner-text { flex: 1; }
-.pwa-banner-text strong { font-size: 0.9rem; display: block; margin-bottom: 2px; }
-.pwa-banner-text span   { font-size: 0.78rem; color: #aaa; }
-.pwa-banner-btns { display: flex; gap: 8px; flex-shrink: 0; }
-.btn-install {
-  padding: 8px 16px;
-  background: var(--accent);
-  color: white;
-  border: none;
-  border-radius: 100px;
-  font-family: "Outfit", sans-serif;
-  font-size: 0.82rem;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-}
-.btn-install:hover { background: #b5561f; }
-.btn-dismiss-pwa {
-  padding: 8px 12px;
-  background: transparent;
-  color: #aaa;
-  border: 1px solid #444;
-  border-radius: 100px;
-  font-family: "Outfit", sans-serif;
-  font-size: 0.82rem;
-  cursor: pointer;
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 @keyframes slideUp {
   from { opacity: 0; transform: translateX(-50%) translateY(20px); }
   to   { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
-/* ── REMINDER CARD ─────────────────────────────────────── */
-.reminder-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 24px 28px;
-  margin-bottom: 28px;
-  animation: fadeUp 0.6s 0.1s ease both;
-}
-.reminder-card .section-title { font-size: 1.1rem; margin-bottom: 16px; }
-.reminder-toggle-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-.reminder-toggle-info strong { font-size: 0.9rem; color: var(--text); display: block; }
-.reminder-toggle-info span   { font-size: 0.78rem; color: var(--muted); }
-.toggle-switch { position: relative; width: 48px; height: 26px; flex-shrink: 0; }
-.toggle-switch input { opacity: 0; width: 0; height: 0; }
-.toggle-slider {
-  position: absolute; inset: 0;
-  background: var(--border); border-radius: 100px;
-  cursor: pointer; transition: background 0.25s;
-}
-.toggle-slider::before {
-  content: ""; position: absolute;
-  width: 20px; height: 20px; left: 3px; top: 3px;
-  background: white; border-radius: 50%;
-  transition: transform 0.25s; box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-}
-.toggle-switch input:checked + .toggle-slider { background: var(--green); }
-.toggle-switch input:checked + .toggle-slider::before { transform: translateX(22px); }
-.reminder-times { display: none; gap: 8px; flex-wrap: wrap; }
-.reminder-times.active { display: flex; }
-.reminder-time-chip {
-  display: flex; align-items: center; gap: 6px;
-  padding: 8px 14px; border-radius: 100px;
-  background: var(--surface2); border: 1.5px solid var(--border);
-  font-size: 0.82rem; color: var(--text); font-weight: 500;
-}
-.reminder-time-chip .chip-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
-.reminder-status { margin-top: 12px; font-size: 0.78rem; padding: 8px 14px; border-radius: 8px; display: none; }
-.reminder-status.active { display: block; }
-.reminder-status.granted { background: var(--green-light); color: var(--green); }
-.reminder-status.denied  { background: #fff5f5; color: #c53030; }
-/* ── NOTIFICATION TOAST ─────────────────────────────────── */
-.notif-toast {
-  position: fixed; top: 24px; right: 24px;
-  background: var(--text); color: white;
-  padding: 14px 18px; border-radius: 14px;
-  font-size: 0.88rem; box-shadow: 0 8px 28px rgba(0,0,0,0.2);
-  z-index: 9999; display: none; max-width: 300px;
-  line-height: 1.5; animation: slideInRight 0.4s ease;
-}
-.notif-toast.active { display: block; }
-.notif-toast strong { display: block; margin-bottom: 3px; font-size: 0.92rem; }
-@keyframes slideInRight {
-  from { opacity: 0; transform: translateX(20px); }
-  to   { opacity: 1; transform: translateX(0); }
+
+.section-divider { height: 1px; background: var(--border); margin: 24px 0; }
+
+@media (max-width: 600px) {
+  .landing-nav { padding: 16px 20px; }
+  .landing-hero { padding: 48px 20px 40px; }
+  .stats-row { flex-direction: column; }
+  .stat-item { border-right: none; border-bottom: 1px solid var(--border); }
+  .stat-item:last-child { border-bottom: none; }
+  .quick-stats { grid-template-columns: repeat(3,1fr); gap: 10px; }
+  .stat-card { padding: 14px 10px; }
+  .form-row { grid-template-columns: 1fr; }
+  .log-wrap, .history-wrap, .profile-wrap, .dashboard-wrap { padding: 20px 16px; }
+  .input-card, .profile-form-card { padding: 20px; }
+  .bar-row { grid-template-columns: 80px 1fr 45px; gap: 10px; }
+  .week-dots { gap: 4px; }
+  .week-dot .dot { width: 30px; height: 30px; }
 }
 </style>
 </head>
 <body>
 
-<div class="top-bar"></div>
+<!-- ══════════════════════════════════════════
+     LANDING PAGE
+══════════════════════════════════════════ -->
+<div id="landingPage" class="page active">
+  <div class="landing-bg"></div>
 
-<header>
-  <div class="logo">Nutri<span>Flow</span></div>
-  <div class="header-subtitle">Your Daily Nutrition Companion</div>
-</header>
+  <nav class="landing-nav">
+    <div class="nav-logo">Nutri<span>Flow</span></div>
+    <div class="nav-actions">
+      <button class="btn-dark-toggle" onclick="toggleDark()" title="Toggle dark mode">🌙</button>
+      <button class="btn-signin-nav" onclick="triggerGoogleLogin()">Sign In</button>
+    </div>
+  </nav>
 
-<div class="hero">
-  <h1>Tell us what you <em>just ate</em></h1>
-  <p>We'll plan your next meals — perfectly balanced with proteins, fiber, vitamins, and everything your body needs.</p>
-  <div class="hero-diet-badge" id="heroDietBadge">🥦 Vegetarian Mode</div>
+  <div class="landing-hero">
+    <div class="hero-eyebrow"> AI-Powered Nutrition</div>
+    <h1>Eat <em>smarter</em>,<br/>live <strong>healthier</strong></h1>
+    <p>Tell NutriFlow what you ate and our AI plans your remaining meals for a perfectly balanced day — personalised to your diet, goals and taste.</p>
+
+    <div class="hero-cta">
+      <button class="btn-google" onclick="triggerGoogleLogin()">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Continue with Google
+      </button>
+    </div>
+
+    <div class="feature-pills">
+      <div class="pill-feat">🥦 Veg · Non-Veg · Vegan</div>
+      <div class="pill-feat">🎙️ Voice Input</div>
+      <div class="pill-feat">🔔 Meal Reminders</div>
+      <div class="pill-feat">📱 Installable App</div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item"><span class="stat-num">3</span><div class="stat-label">Diet Modes</div></div>
+      <div class="stat-item"><span class="stat-num">AI</span><div class="stat-label">Llama 3.3 70B</div></div>
+      <div class="stat-item"><span class="stat-num">Free</span><div class="stat-label">Forever</div></div>
+    </div>
+  </div>
 </div>
 
-<main>
+<!-- ══════════════════════════════════════════
+     APP PAGE (after login)
+══════════════════════════════════════════ -->
+<div id="appPage" class="page">
 
-  <!-- ── INPUT CARD ── -->
-  <div class="input-card" id="inputSection">
-    <div class="section-label">Log Your Meal</div>
-    <div class="section-title">What did you eat?</div>
-    <div class="section-desc">Select your diet type, when you ate, then type or speak your meal.</div>
+  <!-- Top navbar -->
+  <nav class="app-navbar">
+    <div class="app-logo">Nutri<span>Flow</span></div>
+    <div class="navbar-right">
+      <button class="btn-dark-toggle" onclick="toggleDark()">🌙</button>
+      <span class="user-name-nav" id="navUserName"></span>
+      <img class="user-avatar" id="navAvatar" src="" alt="avatar" onclick="switchTab('profile')"/>
+    </div>
+  </nav>
 
-    <!-- ── DIET TOGGLE ── -->
-    <div class="diet-toggle-wrap">
-      <div class="diet-toggle-label">Your Diet Preference</div>
-      <div class="diet-options">
+  <!-- Tab content -->
+  <div class="app-content">
 
-        <button class="diet-btn veg active" data-diet="Vegetarian" onclick="selectDiet(this)">
-          <span class="diet-icon">🥦</span>
-          <span class="diet-name">Vegetarian</span>
-          <span class="diet-desc">Dairy & eggs allowed, no meat or fish</span>
-        </button>
+    <!-- ── DASHBOARD ── -->
+    <div class="tab-panel active" id="panel-dashboard">
+      <div class="dashboard-wrap">
 
-        <button class="diet-btn nonveg" data-diet="Non-Vegetarian" onclick="selectDiet(this)">
-          <span class="diet-icon">🍗</span>
-          <span class="diet-name">Non-Vegetarian</span>
-          <span class="diet-desc">Includes chicken, fish, eggs & meat</span>
-        </button>
+        <div class="greeting-banner">
+          <h2 id="greetingText">Good morning! 👋</h2>
+          <p id="greetingSubtext">Ready to eat smart today?</p>
+        </div>
 
-        <button class="diet-btn vegan" data-diet="Vegan" onclick="selectDiet(this)">
-          <span class="diet-icon">🌱</span>
-          <span class="diet-name">Vegan</span>
-          <span class="diet-desc">100% plant-based, no animal products</span>
-        </button>
+        <div class="quick-stats">
+          <div class="stat-card" style="animation-delay:0.05s">
+            <div class="s-icon">🔥</div>
+            <div class="s-val" id="dashStreak">0</div>
+            <div class="s-lbl">Day Streak</div>
+          </div>
+          <div class="stat-card" style="animation-delay:0.1s">
+            <div class="s-icon">🍽️</div>
+            <div class="s-val" id="dashMealsToday">0</div>
+            <div class="s-lbl">Logged Today</div>
+          </div>
+          <div class="stat-card" style="animation-delay:0.15s">
+            <div class="s-icon">📅</div>
+            <div class="s-val" id="dashThisWeek">0</div>
+            <div class="s-lbl">This Week</div>
+          </div>
+        </div>
+
+        <div class="streak-card">
+          <div class="streak-header">
+            <div class="streak-title">🔥 Weekly Activity</div>
+            <div class="streak-count" id="streakCount">0 days</div>
+          </div>
+          <div class="week-dots" id="weekDots"></div>
+        </div>
+
+        <div class="nutrition-summary">
+          <div class="summary-title">This Week's Average Nutrition</div>
+          <div class="nutrition-bars" id="dashNutritionBars">
+            <div class="bar-row"><span class="bar-label">🥩 Protein</span><div class="bar-track"><div class="bar-fill protein" id="db_protein"></div></div><span class="bar-val" id="dbv_protein">—</span></div>
+            <div class="bar-row"><span class="bar-label">🍚 Carbs</span><div class="bar-track"><div class="bar-fill carbs" id="db_carbs"></div></div><span class="bar-val" id="dbv_carbs">—</span></div>
+            <div class="bar-row"><span class="bar-label">🥑 Fat</span><div class="bar-track"><div class="bar-fill fat" id="db_fat"></div></div><span class="bar-val" id="dbv_fat">—</span></div>
+            <div class="bar-row"><span class="bar-label">🥦 Fiber</span><div class="bar-track"><div class="bar-fill fiber" id="db_fiber"></div></div><span class="bar-val" id="dbv_fiber">—</span></div>
+            <div class="bar-row"><span class="bar-label">🌿 Vitamins</span><div class="bar-track"><div class="bar-fill vitamins" id="db_vitamins"></div></div><span class="bar-val" id="dbv_vitamins">—</span></div>
+          </div>
+        </div>
 
       </div>
+    </div>
 
-      <!-- Info banner -->
-      <div class="diet-info-banner veg active" id="dietInfoVeg">
-        🥦 <strong>Vegetarian plan:</strong> We'll suggest dairy, legumes, paneer, eggs, nuts and plant-based protein sources to keep you well-nourished.
+    <!-- ── LOG MEAL ── -->
+    <div class="tab-panel" id="panel-log">
+      <div class="log-wrap">
+
+        <div class="input-card" id="inputSection">
+          <div class="card-eyebrow">Log Your Meal</div>
+          <div class="card-title">What did you eat?</div>
+          <div class="card-desc">Select your diet, meal time, then describe what you ate.</div>
+
+          <!-- Diet toggle -->
+          <div class="diet-toggle-label">Your Diet Preference</div>
+          <div class="diet-options">
+            <button class="diet-btn veg active" data-diet="Vegetarian" onclick="selectDiet(this)">
+              <span class="diet-icon">🥦</span>
+              <span class="diet-name">Vegetarian</span>
+              <span class="diet-desc">Dairy & eggs ok</span>
+            </button>
+            <button class="diet-btn nonveg" data-diet="Non-Vegetarian" onclick="selectDiet(this)">
+              <span class="diet-icon">🍗</span>
+              <span class="diet-name">Non-Veg</span>
+              <span class="diet-desc">Meat & fish ok</span>
+            </button>
+            <button class="diet-btn vegan" data-diet="Vegan" onclick="selectDiet(this)">
+              <span class="diet-icon">🌱</span>
+              <span class="diet-name">Vegan</span>
+              <span class="diet-desc">100% plant-based</span>
+            </button>
+          </div>
+
+          <!-- Meal time -->
+          <div class="time-label">When did you eat this?</div>
+          <div class="meal-time-btns">
+            <button class="time-btn active" data-time="Morning"     onclick="selectTime(this)">🌅 Morning</button>
+            <button class="time-btn"        data-time="Mid-Morning" onclick="selectTime(this)">☕ Mid-Morning</button>
+            <button class="time-btn"        data-time="Afternoon"   onclick="selectTime(this)">🌤️ Afternoon</button>
+            <button class="time-btn"        data-time="Evening"     onclick="selectTime(this)">🌆 Evening</button>
+          </div>
+
+          <!-- Textarea -->
+          <div class="textarea-wrap">
+            <textarea id="foodInput" placeholder="e.g. Dal rice with ghee and a banana…" maxlength="400" oninput="updateChar()"></textarea>
+            <div class="char-count" id="charCount">0/400</div>
+          </div>
+
+          <div class="error-box" id="errorBox"></div>
+
+          <div class="buttons-row">
+            <button class="btn-primary" id="suggestBtn" onclick="getSuggestions()">✨ Get Suggestions</button>
+            <button class="btn-secondary" id="voiceBtn" onclick="toggleVoice()">
+              <span id="voiceIcon">🎙️</span> <span id="voiceLabel">Speak</span>
+            </button>
+            <div class="rec-badge" id="recBadge"><span class="rec-dot"></span> Recording…</div>
+          </div>
+        </div>
+
+        <!-- Loader -->
+        <div class="loader-wrap" id="loaderWrap">
+          <div class="loader-icon" id="loaderIcon">🍽️</div>
+          <div class="loader-dots"><span></span><span></span><span></span></div>
+          <p class="loader-text">Planning your <strong id="loaderDietLabel">meal</strong> suggestions…</p>
+        </div>
+
+        <!-- Results -->
+        <div class="results-wrap" id="resultsWrap">
+          <div class="results-header">
+            <div class="sub"> Your Personalised Plan</div>
+            <h2 id="resultsTitle">Based on your <em>morning meal</em></h2>
+            <div class="results-diet-tag veg" id="resultsDietTag">🥦 Vegetarian</div>
+          </div>
+          <div class="meal-cards-grid" id="mealCardsGrid"></div>
+          <div class="nutrition-summary" style="margin-bottom:20px">
+            <div class="summary-title">Today's Nutritional Balance</div>
+            <div class="nutrition-bars" id="nutritionBars"></div>
+          </div>
+          <div class="tips-box" id="tipsBox">
+            <div class="tips-label">💡 Health Tip</div>
+            <p id="tipsText"></p>
+          </div>
+          <button class="btn-reset" onclick="resetForm()">← Log Another Meal</button>
+        </div>
+
       </div>
-      <div class="diet-info-banner nonveg" id="dietInfoNonveg">
-        🍗 <strong>Non-Vegetarian plan:</strong> We'll include lean meats, chicken, fish, eggs alongside vegetables for a high-protein balanced diet.
-      </div>
-      <div class="diet-info-banner vegan" id="dietInfoVegan">
-        🌱 <strong>Vegan plan:</strong> Strictly plant-based — tofu, lentils, chickpeas, nuts, seeds and fortified foods. No dairy or eggs whatsoever.
-      </div>
     </div>
 
-    <!-- ── MEAL TIME ── -->
-    <div class="meal-time-wrap">
-      <div class="meal-time-label">When did you eat this?</div>
-      <div class="meal-time-btns">
-        <button class="time-btn active" data-time="Morning"     onclick="selectTime(this)">🌅 Morning</button>
-        <button class="time-btn"        data-time="Mid-Morning" onclick="selectTime(this)">☕ Mid-Morning</button>
-        <button class="time-btn"        data-time="Afternoon"   onclick="selectTime(this)">🌤️ Afternoon</button>
-        <button class="time-btn"        data-time="Evening"     onclick="selectTime(this)">🌆 Evening</button>
-      </div>
-    </div>
+    <!-- ── HISTORY ── -->
+    <div class="tab-panel" id="panel-history">
+      <div class="history-wrap">
+        <div class="history-title">Weekly Diet Plan</div>
+        <div class="history-subtitle">Your meal logs for the past 7 days</div>
 
-    <!-- ── TEXTAREA ── -->
-    <div class="textarea-wrap">
-      <textarea id="foodInput" placeholder="e.g. Dal rice with a little ghee and a banana…" maxlength="400" oninput="updateChar()"></textarea>
-      <div class="char-count" id="charCount">0/400</div>
-    </div>
+        <div class="week-selector">
+          <button class="week-nav-btn" onclick="changeWeek(-1)">‹</button>
+          <div class="week-label" id="weekLabel">This Week</div>
+          <button class="week-nav-btn" onclick="changeWeek(1)">›</button>
+        </div>
 
-    <!-- ── ERROR ── -->
-    <div class="error-box" id="errorBox"></div>
-
-    <!-- ── BUTTONS ── -->
-    <div class="buttons-row">
-      <button class="btn-suggest" id="suggestBtn" onclick="getSuggestions()">
-        <span>✨</span> Get Meal Suggestions
-      </button>
-      <button class="btn-voice" id="voiceBtn" onclick="toggleVoice()">
-        <span id="voiceIcon">🎙️</span> <span id="voiceLabel">Speak Your Meal</span>
-      </button>
-      <div class="rec-badge" id="recBadge">
-        <span class="rec-dot"></span> Recording…
+        <div class="history-calendar" id="historyCalendar">
+          <div style="text-align:center;padding:40px;color:var(--muted)">Loading your meal history…</div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- ── LOADER ── -->
-  <div class="loader-wrap" id="loaderWrap">
-    <div class="loader-icon" id="loaderIcon">🍽️</div>
-    <div class="loader-dots"><span></span><span></span><span></span></div>
-    <p class="loader-text">Crafting your <strong id="loaderDietLabel">vegetarian</strong> meal plan…</p>
-  </div>
+    <!-- ── PROFILE ── -->
+    <div class="tab-panel" id="panel-profile">
+      <div class="profile-wrap">
 
-  <!-- ── RESULTS ── -->
-  <div class="results-wrap" id="resultsWrap">
-    <div class="results-header">
-      <div class="sub">✅ Your Personalised Plan</div>
-      <h2 id="resultsTitle">Based on your <em>morning meal</em></h2>
-      <div class="results-diet-tag veg" id="resultsDietTag">🥦 Vegetarian Plan</div>
-    </div>
+        <div class="profile-hero">
+          <div class="profile-avatar-wrap">
+            <img class="profile-avatar" id="profileAvatar" src="" alt="avatar"/>
+          </div>
+          <div class="profile-name" id="profileName">—</div>
+          <div class="profile-email" id="profileEmail">—</div>
+          <div class="profile-badge"> NutriFlow Member</div>
+        </div>
 
-    <div class="meal-cards-grid" id="mealCardsGrid"></div>
+        <div class="profile-form-card">
+          <div class="card-eyebrow" style="margin-bottom:20px">Personal Details</div>
 
-    <div class="nutrition-overview">
-      <div class="overview-title">Today's Nutritional Balance</div>
-      <div class="nutrition-bars" id="nutritionBars"></div>
-    </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Age</label>
+              <input type="number" id="pAge" placeholder="25" min="10" max="100"/>
+            </div>
+            <div class="form-group">
+              <label>Weight (kg)</label>
+              <input type="number" id="pWeight" placeholder="65" min="20" max="300" oninput="calcBMI()"/>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Height (cm)</label>
+              <input type="number" id="pHeight" placeholder="170" min="100" max="250" oninput="calcBMI()"/>
+            </div>
+            <div class="form-group">
+              <label>Goal</label>
+              <select id="pGoal">
+                <option>Balanced</option>
+                <option>Weight Loss</option>
+                <option>Muscle Gain</option>
+                <option>Diabetes-Friendly</option>
+                <option>Heart Healthy</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:16px">
+            <label>Diet Preference</label>
+            <select id="pDiet">
+              <option>Vegetarian</option>
+              <option>Non-Vegetarian</option>
+              <option>Vegan</option>
+            </select>
+          </div>
 
-    <div class="tips-box" id="tipsBox">
-      <div class="tips-label">💡 Health Tip</div>
-      <p id="tipsText"></p>
-    </div>
+          <div class="bmi-display" id="bmiDisplay" style="display:none">
+            <div>
+              <div class="bmi-label">Your BMI</div>
+              <div class="bmi-category" id="bmiCategory">—</div>
+            </div>
+            <div class="bmi-value" id="bmiValue">—</div>
+          </div>
 
-    <button class="btn-reset" onclick="resetForm()">← Log Another Meal</button>
-  </div>
+          <button class="btn-save-profile" onclick="saveProfile()">💾 Save Profile</button>
+        </div>
 
+        <!-- Reminders -->
+        <div class="reminder-card">
+          <div class="card-eyebrow" style="margin-bottom:12px">🔔 Meal Reminders</div>
+          <div class="reminder-toggle-row">
+            <div class="reminder-toggle-info">
+              <strong>Daily meal notifications</strong>
+              <span>8 AM · 1 PM · 7 PM</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="reminderToggle" onchange="toggleReminders()"/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
 
-  <!-- ── MEAL REMINDER SETTINGS ── -->
-  <div class="reminder-card">
-    <div class="section-label">🔔 Meal Reminders</div>
-    <div class="section-title">Never miss a meal</div>
+        <button class="btn-signout" onclick="signOut()">Sign Out</button>
 
-    <div class="reminder-toggle-row">
-      <div class="reminder-toggle-info">
-        <strong>Enable daily meal reminders</strong>
-        <span>Get notified at breakfast, lunch &amp; dinner time</span>
       </div>
-      <label class="toggle-switch">
-        <input type="checkbox" id="reminderToggle" onchange="toggleReminders()"/>
-        <span class="toggle-slider"></span>
-      </label>
     </div>
 
-    <div class="reminder-times" id="reminderTimes">
-      <div class="reminder-time-chip"><span class="chip-dot"></span>🌅 8:00 AM — Breakfast</div>
-      <div class="reminder-time-chip"><span class="chip-dot"></span>🌤️ 1:00 PM — Lunch</div>
-      <div class="reminder-time-chip"><span class="chip-dot"></span>🌆 7:00 PM — Dinner</div>
-    </div>
+  </div><!-- end app-content -->
 
-    <div class="reminder-status" id="reminderStatus"></div>
-  </div>
+  <!-- Bottom tab bar -->
+  <nav class="tab-bar">
+    <button class="tab-item active" id="tab-dashboard" onclick="switchTab('dashboard')">
+      <span class="tab-icon">🏠</span>
+      <span class="tab-label">Home</span>
+    </button>
+    <button class="tab-item" id="tab-log" onclick="switchTab('log')">
+      <span class="tab-icon">➕</span>
+      <span class="tab-label">Log Meal</span>
+    </button>
+    <button class="tab-item" id="tab-history" onclick="switchTab('history')">
+      <span class="tab-icon">📅</span>
+      <span class="tab-label">History</span>
+    </button>
+    <button class="tab-item" id="tab-profile" onclick="switchTab('profile')">
+      <span class="tab-icon">👤</span>
+      <span class="tab-label">Profile</span>
+    </button>
+  </nav>
 
-  <!-- ── HISTORY ── -->
-  <div class="history-section" id="historySection" style="display:none">
-    <h3>Recent Entries</h3>
-    <div class="history-list" id="historyList"></div>
-  </div>
+</div><!-- end appPage -->
 
-</main>
-
-
-<!-- ── PWA INSTALL BANNER ── -->
+<!-- Toasts & PWA -->
+<div class="notif-toast" id="notifToast">
+  <strong id="notifTitle"></strong>
+  <span id="notifBody"></span>
+</div>
 <div class="pwa-banner" id="pwaBanner">
   <div class="pwa-banner-text">
     <strong>📱 Install NutriFlow</strong>
-    <span>Add to home screen for quick access</span>
+    <span>Add to your home screen</span>
   </div>
   <div class="pwa-banner-btns">
     <button class="btn-install" onclick="installPWA()">Install</button>
@@ -924,90 +1370,254 @@ footer {
   </div>
 </div>
 
-<!-- ── IN-APP NOTIFICATION TOAST ── -->
-<div class="notif-toast" id="notifToast">
-  <strong id="notifTitle">🍳 Breakfast Time!</strong>
-  <span id="notifBody">Log your morning meal on NutriFlow 🌿</span>
-</div>
-
-<footer>NutriFlow — Powered by Groq AI (Llama 3.3 70B) &nbsp;·&nbsp; Eat smart, live well 🌿</footer>
+<!-- Google Identity Services -->
+<script src="https://accounts.google.com/gsi/client" async></script>
 
 <script>
-// ─── State ───────────────────────────────────────────────────────
-let selectedTime = 'Morning';
-let selectedDiet = 'Vegetarian';
-let recognition  = null;
-let isRecording  = false;
-let history = JSON.parse(localStorage.getItem('nutriflow_history') || '[]');
+// ══════════════════════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════════════════════
+const BACKEND_URL   = 'http://localhost:8000';
+const GOOGLE_CLIENT = '321739829551-tejlo5e521h07misggglinhvdsdbhup6.apps.googleusercontent.com';
 
-const BACKEND_URL = 'https://nutriflow-s4bm.onrender.com';
+// ══════════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════════
+let currentUser   = null;
+let authToken     = null;
+let allMeals      = [];
+let selectedTime  = 'Morning';
+let selectedDiet  = 'Vegetarian';
+let recognition   = null;
+let isRecording   = false;
+let weekOffset    = 0;
+let deferredInstallPrompt = null;
+let reminderInterval = null;
 
-// ─── Diet config ─────────────────────────────────────────────────
 const DIET_CONFIG = {
-  'Vegetarian':     { cls: 'veg',    icon: '🥦', loaderIcon: '🥦', label: 'vegetarian' },
-  'Non-Vegetarian': { cls: 'nonveg', icon: '🍗', loaderIcon: '🍗', label: 'non-vegetarian' },
-  'Vegan':          { cls: 'vegan',  icon: '🌱', loaderIcon: '🌱', label: 'vegan' },
+  'Vegetarian':     { cls: 'veg',    icon: '🥦', label: 'vegetarian' },
+  'Non-Vegetarian': { cls: 'nonveg', icon: '🍗', label: 'non-vegetarian' },
+  'Vegan':          { cls: 'vegan',  icon: '🌱', label: 'vegan' },
 };
 
-// ─── Select Diet ─────────────────────────────────────────────────
+const REMINDERS = [
+  { hour:8,  minute:0,  title:'🌅 Breakfast Time!',  body:'Start your day right — log your morning meal! 🌿' },
+  { hour:13, minute:0,  title:'🌤️ Lunch Time!',      body:'Midday fuel up! Log your lunch and stay on track 🍛' },
+  { hour:19, minute:0,  title:'🌆 Dinner Time!',     body:"Log your dinner for a complete day 🌙" },
+];
+
+// ══════════════════════════════════════════════════════════════
+// DARK MODE
+// ══════════════════════════════════════════════════════════════
+function toggleDark() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.querySelectorAll('.btn-dark-toggle').forEach(b => b.textContent = isDark ? '🌙' : '☀️');
+  localStorage.setItem('nf_theme', isDark ? 'light' : 'dark');
+}
+function initTheme() {
+  const saved = localStorage.getItem('nf_theme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+  document.querySelectorAll('.btn-dark-toggle').forEach(b => b.textContent = saved === 'dark' ? '☀️' : '🌙');
+}
+
+// ══════════════════════════════════════════════════════════════
+// GOOGLE AUTH
+// ══════════════════════════════════════════════════════════════
+// function triggerGoogleLogin() {
+//   google.accounts.id.initialize({
+//     client_id: GOOGLE_CLIENT,
+//     callback: handleGoogleResponse,
+//     auto_select: false,
+//   });
+//   google.accounts.id.prompt((notification) => {
+//     if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+//       // Fallback: show one-tap manually
+//       google.accounts.id.renderButton(
+//         document.createElement('div'),
+//         { theme: 'outline', size: 'large' }
+//       );
+//       // Force popup
+//       google.accounts.oauth2.initTokenClient({
+//         client_id: GOOGLE_CLIENT,
+//         scope: 'email profile openid',
+//         callback: () => {},
+//       });
+//     }
+//   });
+// }
+function triggerGoogleLogin() {
+  const width  = 500, height = 600;
+  const left   = window.screenX + (window.outerWidth  - width)  / 2;
+  const top    = window.screenY + (window.outerHeight - height) / 2;
+
+  const params = new URLSearchParams({
+    client_id:     GOOGLE_CLIENT,
+    redirect_uri:  'http://127.0.0.1:5500',
+    response_type: 'token id_token',
+    scope:         'openid email profile',
+    nonce:         Math.random().toString(36),
+    prompt:        'select_account',
+  });
+
+  const popup = window.open(
+    'https://accounts.google.com/o/oauth2/v2/auth?' + params,
+    'googleLogin',
+    `width=${width},height=${height},left=${left},top=${top}`
+  );
+
+  // Poll popup for redirect
+  const timer = setInterval(() => {
+    try {
+      const url = popup.location.href;
+      if (url.startsWith('http://127.0.0.1:5500')) {
+        clearInterval(timer);
+        popup.close();
+        // Extract id_token from URL fragment
+        const hash   = new URLSearchParams(popup.location.hash.slice(1));
+        const fragment = new URLSearchParams(url.split('#')[1]);
+        const idToken = fragment.get('id_token');
+        if (idToken) {
+          handleGoogleResponse({ credential: idToken });
+        } else {
+          showToast(' Login failed', 'Could not get token from Google');
+        }
+      }
+    } catch(e) {
+      // Cross-origin — popup still on Google page, keep waiting
+    }
+    if (popup.closed) clearInterval(timer);
+  }, 500);
+}
+
+async function handleGoogleResponse(response) {
+  try {
+    showToast('⏳ Signing in…', 'Verifying your Google account');
+    const res = await fetch(`${BACKEND_URL}/auth/google`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: response.credential })
+    });
+    if (!res.ok) throw new Error('Auth failed');
+    const data = await res.json();
+    authToken   = data.token;
+    currentUser = data;
+    localStorage.setItem('nf_token', authToken);
+    localStorage.setItem('nf_user',  JSON.stringify(data));
+    enterApp(data);
+  } catch (err) {
+    showToast(' Sign in failed', err.message);
+  }
+}
+async function handleGoogleResponse(response) {
+  try {
+    showToast('⏳ Signing in…', 'Verifying your Google account');
+    const res = await fetch(`${BACKEND_URL}/auth/google`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: response.credential })
+    });
+    if (!res.ok) throw new Error('Auth failed');
+    const data = await res.json();
+    authToken   = data.token;
+    currentUser = data;
+    localStorage.setItem('nf_token',   authToken);
+    localStorage.setItem('nf_user',    JSON.stringify(data));
+    enterApp(data);
+  } catch (err) {
+    showToast(' Sign in failed', err.message);
+  }
+}
+
+function enterApp(user) {
+  // Update UI
+  document.getElementById('navUserName').textContent = user.name.split(' ')[0];
+  document.getElementById('navAvatar').src   = user.picture || '';
+  document.getElementById('profileAvatar').src = user.picture || '';
+  document.getElementById('profileName').textContent  = user.name;
+  document.getElementById('profileEmail').textContent = user.email;
+
+  // Show app
+  document.getElementById('landingPage').classList.remove('active');
+  document.getElementById('appPage').classList.add('active');
+
+  // Greeting
+  const h = new Date().getHours();
+  const greet = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+  document.getElementById('greetingText').textContent = `${greet}, ${user.name.split(' ')[0]}! 👋`;
+
+  // Load data
+  loadMealHistory();
+  loadProfile();
+  initReminders();
+  initPWA();
+}
+
+function signOut() {
+  authToken = null; currentUser = null; allMeals = [];
+  localStorage.removeItem('nf_token');
+  localStorage.removeItem('nf_user');
+  document.getElementById('appPage').classList.remove('active');
+  document.getElementById('landingPage').classList.add('active');
+  showToast(' Signed out', 'See you next time!');
+}
+
+// ══════════════════════════════════════════════════════════════
+// TAB NAVIGATION
+// ══════════════════════════════════════════════════════════════
+function switchTab(tab) {
+  document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.getElementById('panel-' + tab).classList.add('active');
+  if (tab === 'history') renderHistory();
+  if (tab === 'dashboard') updateDashboard();
+}
+
+// ══════════════════════════════════════════════════════════════
+// MEAL INPUT
+// ══════════════════════════════════════════════════════════════
 function selectDiet(el) {
-  // Toggle buttons
   document.querySelectorAll('.diet-btn').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
   selectedDiet = el.dataset.diet;
-
-  const cfg = DIET_CONFIG[selectedDiet];
-
-  // Update hero badge
-  const badge = document.getElementById('heroDietBadge');
-  badge.textContent = cfg.icon + ' ' + selectedDiet + ' Mode';
-  badge.className = 'hero-diet-badge ' + cfg.cls;
-
-  // Show correct info banner
-  document.querySelectorAll('.diet-info-banner').forEach(b => b.classList.remove('active'));
-  const bannerMap = { 'Vegetarian': 'dietInfoVeg', 'Non-Vegetarian': 'dietInfoNonveg', 'Vegan': 'dietInfoVegan' };
-  document.getElementById(bannerMap[selectedDiet]).classList.add('active');
 }
 
-// ─── Select Time ─────────────────────────────────────────────────
 function selectTime(el) {
   document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
   selectedTime = el.dataset.time;
 }
 
-// ─── Char Count ──────────────────────────────────────────────────
 function updateChar() {
   const v = document.getElementById('foodInput').value.length;
   document.getElementById('charCount').textContent = v + '/400';
 }
 
-// ─── Voice Input ─────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════
+// VOICE INPUT
+// ══════════════════════════════════════════════════════════════
 function toggleVoice() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) { showError('Voice input requires Chrome or Edge browser.'); return; }
+  if (!SR) { showError('Voice input requires Chrome or Edge.'); return; }
   if (isRecording) { recognition.stop(); return; }
-
   recognition = new SR();
   recognition.lang = 'en-IN';
   recognition.continuous = false;
   recognition.interimResults = false;
-
   recognition.onstart = () => {
     isRecording = true;
     document.getElementById('voiceBtn').classList.add('recording');
     document.getElementById('voiceIcon').textContent = '⏹️';
-    document.getElementById('voiceLabel').textContent = 'Stop Recording';
+    document.getElementById('voiceLabel').textContent = 'Stop';
     document.getElementById('recBadge').classList.add('active');
   };
   recognition.onresult = (e) => {
     document.getElementById('foodInput').value = e.results[0][0].transcript;
     updateChar();
   };
-  recognition.onerror = (e) => {
-    showError('Mic error: ' + e.error + '. Check your mic permissions.');
-    stopRecording();
-  };
+  recognition.onerror = (e) => { showError('Mic error: ' + e.error); stopRecording(); };
   recognition.onend = stopRecording;
   recognition.start();
 }
@@ -1016,352 +1626,395 @@ function stopRecording() {
   isRecording = false;
   document.getElementById('voiceBtn').classList.remove('recording');
   document.getElementById('voiceIcon').textContent = '🎙️';
-  document.getElementById('voiceLabel').textContent = 'Speak Your Meal';
+  document.getElementById('voiceLabel').textContent = 'Speak';
   document.getElementById('recBadge').classList.remove('active');
 }
 
-// ─── Helpers ─────────────────────────────────────────────────────
-function showError(msg) {
-  const box = document.getElementById('errorBox');
-  box.textContent = msg;
-  box.classList.add('active');
-}
-function hideError() { document.getElementById('errorBox').classList.remove('active'); }
-
-function showLoader() {
-  const cfg = DIET_CONFIG[selectedDiet];
-  document.getElementById('inputSection').style.display = 'none';
-  document.getElementById('loaderIcon').textContent = cfg.loaderIcon;
-  document.getElementById('loaderDietLabel').textContent = cfg.label;
-  document.getElementById('loaderWrap').classList.add('active');
-}
-function hideLoader() { document.getElementById('loaderWrap').classList.remove('active'); }
-
-function showResults() { document.getElementById('resultsWrap').classList.add('active'); }
-
-function resetForm() {
-  document.getElementById('resultsWrap').classList.remove('active');
-  document.getElementById('inputSection').style.display = 'block';
-  document.getElementById('foodInput').value = '';
-  updateChar();
-  hideError();
-  renderHistory();
-}
-
-// ─── History ─────────────────────────────────────────────────────
-function saveHistory(time, food, diet) {
-  history.unshift({ time, food, diet, date: new Date().toLocaleTimeString() });
-  if (history.length > 6) history.pop();
-  localStorage.setItem('nutriflow_history', JSON.stringify(history));
-}
-
-function renderHistory() {
-  const list = document.getElementById('historyList');
-  const section = document.getElementById('historySection');
-  if (!history.length) { section.style.display = 'none'; return; }
-  section.style.display = 'block';
-  list.innerHTML = history.map(h => {
-    const cfg = DIET_CONFIG[h.diet] || DIET_CONFIG['Vegetarian'];
-    return `
-      <div class="history-item" onclick="fillHistory('${escapeHtml(h.food)}','${h.time}','${h.diet}')">
-        <span class="history-time">${h.time}</span>
-        <span class="history-diet-pill ${cfg.cls}">${cfg.icon} ${h.diet || 'Veg'}</span>
-        <span class="history-text">${escapeHtml(h.food)}</span>
-        <span class="history-arrow">↵</span>
-      </div>`;
-  }).join('');
-}
-
-function fillHistory(food, time, diet) {
-  document.getElementById('foodInput').value = food;
-  updateChar();
-  const timeBtn = [...document.querySelectorAll('.time-btn')].find(b => b.dataset.time === time);
-  if (timeBtn) selectTime(timeBtn);
-  const dietBtn = [...document.querySelectorAll('.diet-btn')].find(b => b.dataset.diet === diet);
-  if (dietBtn) selectDiet(dietBtn);
-}
-
-function escapeHtml(s) {
-  return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
-
-// ─── Main API Call ────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════
+// GET SUGGESTIONS
+// ══════════════════════════════════════════════════════════════
 async function getSuggestions() {
   const food = document.getElementById('foodInput').value.trim();
   hideError();
+  if (!food) { showError('Please describe what you ate!'); return; }
 
-  if (!food) { showError('Please describe what you ate before getting suggestions!'); return; }
-
-  saveHistory(selectedTime, food, selectedDiet);
+  document.getElementById('inputSection').style.display = 'none';
+  document.getElementById('loaderIcon').textContent = DIET_CONFIG[selectedDiet].loaderIcon || '🍽️';
+  document.getElementById('loaderDietLabel').textContent = DIET_CONFIG[selectedDiet].label;
+  document.getElementById('loaderWrap').classList.add('active');
   document.getElementById('suggestBtn').disabled = true;
-  showLoader();
 
   try {
-    const response = await fetch(`${BACKEND_URL}/suggest`, {
+    const res = await fetch(`${BACKEND_URL}/suggest`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ food, meal_time: selectedTime, diet_type: selectedDiet })
     });
-
-    if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
-      throw new Error(err.detail || `Server error ${response.status}`);
-    }
-
-    const plan = await response.json();
+    if (!res.ok) throw new Error((await res.json()).detail || 'Server error');
+    const plan = await res.json();
     renderResults(plan);
 
-  } catch (err) {
-    hideLoader();
-    document.getElementById('inputSection').style.display = 'block';
-    if (err.message.includes('fetch') || err.message.includes('Failed')) {
-      showError('⚠️ Cannot connect to the backend. Make sure you ran: uvicorn main:app --reload');
-    } else {
-      showError('⚠️ ' + (err.message || 'Something went wrong. Please try again.'));
+    // Save to backend if logged in
+    if (authToken) {
+      fetch(`${BACKEND_URL}/meals/save`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+        body: JSON.stringify({ food, meal_time: selectedTime, diet_type: selectedDiet, plan })
+      }).then(() => loadMealHistory());
     }
+
+  } catch (err) {
+    document.getElementById('loaderWrap').classList.remove('active');
+    document.getElementById('inputSection').style.display = 'block';
+    showError('⚠️ ' + (err.message.includes('fetch') ? 'Cannot connect to backend. Is the server running?' : err.message));
   } finally {
     document.getElementById('suggestBtn').disabled = false;
   }
 }
 
-// ─── Render Results ───────────────────────────────────────────────
 function renderResults(plan) {
-  hideLoader();
-
+  document.getElementById('loaderWrap').classList.remove('active');
   const cfg = DIET_CONFIG[selectedDiet];
 
-  // Header
-  document.getElementById('resultsTitle').innerHTML =
-    `Based on your <em>${selectedTime.toLowerCase()} meal</em>`;
-
-  // Diet tag
+  document.getElementById('resultsTitle').innerHTML = `Based on your <em>${selectedTime.toLowerCase()} meal</em>`;
   const tag = document.getElementById('resultsDietTag');
-  tag.textContent = cfg.icon + ' ' + selectedDiet + ' Plan';
+  tag.textContent = cfg.icon + ' ' + selectedDiet;
   tag.className = 'results-diet-tag ' + cfg.cls;
 
-  // Meal cards
-  const timeClassMap = {
-    'Lunch': 'lunch', 'Afternoon': 'lunch', 'Snack': 'snack',
-    'Evening': 'evening', 'Evening Snack': 'snack',
-    'Dinner': 'dinner', 'Night': 'dinner'
-  };
-
-  const grid = document.getElementById('mealCardsGrid');
-  grid.innerHTML = plan.meals.map((meal, i) => {
+  const timeClassMap = { 'Lunch':'lunch','Afternoon':'lunch','Snack':'snack','Evening':'evening','Evening Snack':'snack','Dinner':'dinner','Night':'dinner' };
+  document.getElementById('mealCardsGrid').innerHTML = plan.meals.map((meal,i) => {
     const cls = timeClassMap[meal.time] || 'lunch';
-    const pills = meal.nutrients.map(n =>
-      `<span class="pill ${n === meal.highlightNutrient ? 'highlight' : ''}">${n}</span>`
-    ).join('');
-
-    return `
-      <div class="meal-card ${cls}" style="animation-delay:${i*0.1}s">
-        <span class="card-badge ${cls}">
-          <span class="diet-dot ${cfg.cls}"></span>${meal.time}
-        </span>
-        <span class="card-emoji">${meal.emoji}</span>
-        <div class="card-title">${meal.title}</div>
-        <div class="card-desc">${meal.description}</div>
-        <div class="nutrient-pills">${pills}</div>
-      </div>`;
+    const pills = meal.nutrients.map(n => `<span class="pill ${n===meal.highlightNutrient?'highlight':''}">${n}</span>`).join('');
+    return `<div class="meal-card ${cls}" style="animation-delay:${i*0.1}s">
+      <span class="card-badge ${cls}">${meal.time}</span>
+      <span class="card-emoji">${meal.emoji}</span>
+      <div class="card-title">${meal.title}</div>
+      <div class="card-desc">${meal.description}</div>
+      <div class="nutrient-pills">${pills}</div>
+    </div>`;
   }).join('');
 
-  // Nutrition bars
   const nb = plan.nutritionBalance;
   const bars = [
-    { label: '🥩 Protein',    cls: 'protein', pct: nb.protein  },
-    { label: '🍚 Carbs',      cls: 'carbs',   pct: nb.carbs    },
-    { label: '🥑 Healthy Fat',cls: 'fat',     pct: nb.fat      },
-    { label: '🥦 Fiber',      cls: 'fiber',   pct: nb.fiber    },
-    { label: '🌿 Vitamins',   cls: 'vitamins',pct: nb.vitamins },
+    {label:'🥩 Protein',cls:'protein',pct:nb.protein},
+    {label:'🍚 Carbs',cls:'carbs',pct:nb.carbs},
+    {label:'🥑 Healthy Fat',cls:'fat',pct:nb.fat},
+    {label:'🥦 Fiber',cls:'fiber',pct:nb.fiber},
+    {label:'🌿 Vitamins',cls:'vitamins',pct:nb.vitamins},
   ];
-
-  document.getElementById('nutritionBars').innerHTML = bars.map(b => `
-    <div class="bar-row">
-      <span class="bar-label">${b.label}</span>
-      <div class="bar-track"><div class="bar-fill ${b.cls}" id="bar_${b.cls}"></div></div>
-      <span class="bar-val">${b.pct}%</span>
-    </div>`).join('');
-
+  document.getElementById('nutritionBars').innerHTML = bars.map(b =>
+    `<div class="bar-row"><span class="bar-label">${b.label}</span><div class="bar-track"><div class="bar-fill ${b.cls}" id="rbar_${b.cls}"></div></div><span class="bar-val">${b.pct}%</span></div>`
+  ).join('');
   document.getElementById('tipsText').textContent = plan.healthTip;
-  showResults();
+  document.getElementById('resultsWrap').classList.add('active');
 
-  setTimeout(() => {
-    bars.forEach(b => {
-      const el = document.getElementById('bar_' + b.cls);
-      if (el) el.style.width = Math.min(b.pct, 100) + '%';
+  setTimeout(() => bars.forEach(b => {
+    const el = document.getElementById('rbar_'+b.cls);
+    if (el) el.style.width = Math.min(b.pct,100)+'%';
+  }), 200);
+}
+
+function resetForm() {
+  document.getElementById('resultsWrap').classList.remove('active');
+  document.getElementById('inputSection').style.display = 'block';
+  document.getElementById('foodInput').value = '';
+  updateChar(); hideError();
+}
+
+// ══════════════════════════════════════════════════════════════
+// MEAL HISTORY
+// ══════════════════════════════════════════════════════════════
+async function loadMealHistory() {
+  if (!authToken) return;
+  try {
+    const res = await fetch(`${BACKEND_URL}/meals/history`, {
+      headers: { 'Authorization': `Bearer ${authToken}` }
     });
-  }, 200);
+    const data = await res.json();
+    allMeals = data.meals || [];
+    updateDashboard();
+  } catch (e) { console.warn('History load failed', e); }
+}
 
+function renderHistory() {
+  const cal = document.getElementById('historyCalendar');
+  const today = new Date();
+  const weekStart = new Date(today);
+  weekStart.setDate(today.getDate() - today.getDay() + 1 + weekOffset * 7); // Monday
+
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  document.getElementById('weekLabel').textContent = weekOffset === 0 ? 'This Week' :
+    weekOffset === -1 ? 'Last Week' :
+    `Week of ${weekStart.toLocaleDateString('en-IN', {day:'numeric',month:'short'})}`;
+
+  cal.innerHTML = '';
+  for (let i = 0; i < 7; i++) {
+    const day = new Date(weekStart);
+    day.setDate(weekStart.getDate() + i);
+    const dateStr = day.toISOString().split('T')[0];
+    const isToday = dateStr === today.toISOString().split('T')[0];
+    const isFuture = day > today;
+    const dayMeals = allMeals.filter(m => m.date_str === dateStr);
+    const hasLogged = dayMeals.length > 0;
+
+    const badgeClass = isToday ? 'today' : hasLogged ? 'logged' : 'missed';
+    const badgeText  = isToday ? ' Today' : hasLogged ? ` ${dayMeals.length} logged` : isFuture ? '—' : 'Not logged';
+
+    const mealsHTML = dayMeals.length > 0
+      ? dayMeals.map(m => {
+          const emoji = m.plan?.meals?.[0]?.emoji || '🍽️';
+          const dietCls = DIET_CONFIG[m.diet_type]?.cls || 'veg';
+          return `<div class="day-meal-item">
+            <div class="meal-item-emoji">${emoji}</div>
+            <div class="meal-item-info">
+              <div class="meal-item-time">${m.meal_time}</div>
+              <div class="meal-item-food">${escapeHtml(m.food)}</div>
+              <span class="meal-item-diet ${dietCls}">${DIET_CONFIG[m.diet_type]?.icon || ''} ${m.diet_type}</span>
+            </div>
+          </div>`;
+        }).join('')
+      : `<div class="no-meals-placeholder">${isFuture ? ' Future day' : ' No meals logged'}</div>`;
+
+    const card = document.createElement('div');
+    card.className = 'history-day-card';
+    card.style.animationDelay = `${i*0.05}s`;
+    card.innerHTML = `
+      <div class="day-card-header">
+        <div>
+          <div class="day-name">${days[i]}, ${day.toLocaleDateString('en-IN',{day:'numeric',month:'short'})}</div>
+        </div>
+        <span class="day-badge ${badgeClass}">${badgeText}</span>
+      </div>
+      <div class="day-meals-list">${mealsHTML}</div>`;
+    cal.appendChild(card);
+  }
+}
+
+function changeWeek(dir) {
+  weekOffset += dir;
+  if (weekOffset > 0) weekOffset = 0;
   renderHistory();
 }
 
-// ─── Init ─────────────────────────────────────────────────────────
-renderHistory();
-initReminders();
+// ══════════════════════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════════════════════
+function updateDashboard() {
+  const today = new Date().toISOString().split('T')[0];
+  const mealsToday = allMeals.filter(m => m.date_str === today);
 
-// ═══════════════════════════════════════════════════════
-// PWA — Service Worker Registration
-// ═══════════════════════════════════════════════════════
-let deferredInstallPrompt = null;
+  // This week
+  const weekStart = new Date();
+  weekStart.setDate(weekStart.getDate() - weekStart.getDay() + 1);
+  const weekStartStr = weekStart.toISOString().split('T')[0];
+  const mealsThisWeek = allMeals.filter(m => m.date_str >= weekStartStr);
 
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', async () => {
-    try {
-      const reg = await navigator.serviceWorker.register('/sw.js');
-      console.log('[PWA] Service Worker registered:', reg.scope);
-    } catch (err) {
-      console.warn('[PWA] SW registration failed:', err);
-    }
-  });
+  // Streak
+  let streak = 0;
+  const d = new Date();
+  while (true) {
+    const ds = d.toISOString().split('T')[0];
+    if (allMeals.some(m => m.date_str === ds)) { streak++; d.setDate(d.getDate()-1); }
+    else break;
+  }
+
+  document.getElementById('dashStreak').textContent = streak;
+  document.getElementById('dashMealsToday').textContent = mealsToday.length;
+  document.getElementById('dashThisWeek').textContent = mealsThisWeek.length;
+  document.getElementById('streakCount').textContent = streak + ' day' + (streak!==1?'s':'');
+
+  // Week dots
+  const days = ['M','T','W','T','F','S','S'];
+  const dots = document.getElementById('weekDots');
+  dots.innerHTML = '';
+  for (let i = 0; i < 7; i++) {
+    const d2 = new Date(weekStart);
+    d2.setDate(weekStart.getDate() + i);
+    const ds = d2.toISOString().split('T')[0];
+    const isToday2 = ds === today;
+    const logged = allMeals.some(m => m.date_str === ds);
+    const dot = document.createElement('div');
+    dot.className = 'week-dot' + (logged?' logged':'') + (isToday2?' today':'');
+    dot.innerHTML = `<div class="dot">${logged?'✓':days[i]}</div><div class="day-lbl">${days[i]}</div>`;
+    dots.appendChild(dot);
+  }
+
+  // Avg nutrition bars
+  if (mealsThisWeek.length > 0) {
+    const keys = ['protein','carbs','fat','fiber','vitamins'];
+    const avgs = {};
+    keys.forEach(k => {
+      const vals = mealsThisWeek.map(m => m.plan?.nutritionBalance?.[k] || 0).filter(v=>v>0);
+      avgs[k] = vals.length ? Math.round(vals.reduce((a,b)=>a+b,0)/vals.length) : 0;
+    });
+    setTimeout(() => keys.forEach(k => {
+      const el = document.getElementById('db_'+k);
+      const vl = document.getElementById('dbv_'+k);
+      if (el) el.style.width = Math.min(avgs[k],100)+'%';
+      if (vl) vl.textContent = avgs[k]+'%';
+    }), 300);
+  }
 }
 
-// Capture the install prompt
-window.addEventListener('beforeinstallprompt', (e) => {
+// ══════════════════════════════════════════════════════════════
+// PROFILE
+// ══════════════════════════════════════════════════════════════
+async function loadProfile() {
+  if (!authToken) return;
+  try {
+    const res = await fetch(`${BACKEND_URL}/profile`, {
+      headers: { 'Authorization': `Bearer ${authToken}` }
+    });
+    const p = await res.json();
+    if (p.age)    document.getElementById('pAge').value    = p.age;
+    if (p.weight) document.getElementById('pWeight').value = p.weight;
+    if (p.height) document.getElementById('pHeight').value = p.height;
+    if (p.goal)   document.getElementById('pGoal').value   = p.goal;
+    if (p.diet_type) document.getElementById('pDiet').value = p.diet_type;
+    calcBMI();
+  } catch(e) {}
+}
+
+async function saveProfile() {
+  if (!authToken) return;
+  const body = {
+    name:      currentUser?.name || '',
+    age:       parseInt(document.getElementById('pAge').value)||0,
+    weight:    parseFloat(document.getElementById('pWeight').value)||0,
+    height:    parseFloat(document.getElementById('pHeight').value)||0,
+    diet_type: document.getElementById('pDiet').value,
+    goal:      document.getElementById('pGoal').value,
+  };
+  try {
+    await fetch(`${BACKEND_URL}/profile`, {
+      method: 'PUT',
+      headers: { 'Content-Type':'application/json', 'Authorization':`Bearer ${authToken}` },
+      body: JSON.stringify(body)
+    });
+    showToast(' Profile saved!', 'Your details have been updated.');
+  } catch(e) { showToast(' Save failed', e.message); }
+}
+
+function calcBMI() {
+  const w = parseFloat(document.getElementById('pWeight').value);
+  const h = parseFloat(document.getElementById('pHeight').value) / 100;
+  const display = document.getElementById('bmiDisplay');
+  if (!w || !h) { display.style.display='none'; return; }
+  const bmi = (w/(h*h)).toFixed(1);
+  const cat = bmi<18.5?'Underweight':bmi<25?'Normal weight':bmi<30?'Overweight':'Obese';
+  document.getElementById('bmiValue').textContent    = bmi;
+  document.getElementById('bmiCategory').textContent = cat;
+  display.style.display = 'flex';
+}
+
+// ══════════════════════════════════════════════════════════════
+// REMINDERS
+// ══════════════════════════════════════════════════════════════
+async function toggleReminders() {
+  const toggle = document.getElementById('reminderToggle');
+  if (!toggle.checked) { clearInterval(reminderInterval); localStorage.setItem('nf_reminders','0'); return; }
+  if (!('Notification' in window)) { toggle.checked=false; return; }
+  let perm = Notification.permission;
+  if (perm==='default') perm = await Notification.requestPermission();
+  if (perm==='granted') {
+    localStorage.setItem('nf_reminders','1');
+    startReminderChecker();
+    showToast(' Reminders on!','You will be notified at 8 AM, 1 PM and 7 PM.');
+  } else { toggle.checked=false; }
+}
+
+function startReminderChecker() {
+  if (reminderInterval) clearInterval(reminderInterval);
+  reminderInterval = setInterval(() => {
+    const now=new Date(), h=now.getHours(), m=now.getMinutes();
+    REMINDERS.forEach(r => { if(r.hour===h&&r.minute===m) fireReminder(r); });
+  }, 60000);
+}
+
+function fireReminder(r) {
+  if (Notification.permission==='granted') {
+    const n = new Notification(r.title, {body:r.body, icon:'/icons/icon-192.png', tag:'meal-reminder'});
+    n.onclick = () => { window.focus(); n.close(); };
+  }
+  showToast(r.title, r.body);
+}
+
+function initReminders() {
+  const enabled = localStorage.getItem('nf_reminders')==='1';
+  if (enabled && Notification.permission==='granted') {
+    document.getElementById('reminderToggle').checked=true;
+    startReminderChecker();
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════════════════
+function showError(msg) {
+  const b = document.getElementById('errorBox');
+  b.textContent=msg; b.classList.add('active');
+}
+function hideError() { document.getElementById('errorBox').classList.remove('active'); }
+
+let toastTimer=null;
+function showToast(title, body) {
+  document.getElementById('notifTitle').textContent=title;
+  document.getElementById('notifBody').textContent=body;
+  const t=document.getElementById('notifToast');
+  t.classList.add('active');
+  if(toastTimer) clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('active'),4000);
+}
+
+function escapeHtml(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ══════════════════════════════════════════════════════════════
+// PWA
+// ══════════════════════════════════════════════════════════════
+function initPWA() {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(e=>console.warn('SW:',e));
+  }
+}
+
+window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
-  deferredInstallPrompt = e;
-  // Show install banner after 3 seconds
-  setTimeout(() => {
-    if (!localStorage.getItem('pwa_dismissed')) {
-      document.getElementById('pwaBanner').classList.add('active');
-    }
-  }, 3000);
+  deferredInstallPrompt=e;
+  setTimeout(()=>{ if(!localStorage.getItem('pwa_dismissed')) document.getElementById('pwaBanner').classList.add('active'); },5000);
 });
 
 async function installPWA() {
   if (!deferredInstallPrompt) return;
   deferredInstallPrompt.prompt();
-  const { outcome } = await deferredInstallPrompt.userChoice;
-  console.log('[PWA] Install outcome:', outcome);
-  deferredInstallPrompt = null;
+  const {outcome} = await deferredInstallPrompt.userChoice;
+  deferredInstallPrompt=null;
   document.getElementById('pwaBanner').classList.remove('active');
+  if (outcome==='accepted') showToast('🎉 Installed!','NutriFlow added to home screen.');
 }
 
 function dismissPWA() {
   document.getElementById('pwaBanner').classList.remove('active');
-  localStorage.setItem('pwa_dismissed', '1');
+  localStorage.setItem('pwa_dismissed','1');
 }
 
-// Detect when PWA is installed
-window.addEventListener('appinstalled', () => {
-  document.getElementById('pwaBanner').classList.remove('active');
-  showToast('🎉 NutriFlow installed!', 'App added to your home screen successfully.');
-  deferredInstallPrompt = null;
-});
-
-// ═══════════════════════════════════════════════════════
-// MEAL REMINDERS
-// ═══════════════════════════════════════════════════════
-const REMINDERS = [
-  { hour: 8,  minute: 0,  title: '🌅 Breakfast Time!',  body: 'Start your day right — log your morning meal on NutriFlow! 🌿' },
-  { hour: 13, minute: 0,  title: '🌤️ Lunch Time!',      body: 'Midday fuel up! Log your lunch and stay on track 🍛' },
-  { hour: 19, minute: 0,  title: '🌆 Dinner Time!',     body: "Evening's here — log your dinner for a complete day 🌙" },
-];
-
-let reminderInterval = null;
-
-async function toggleReminders() {
-  const toggle = document.getElementById('reminderToggle');
-  const status = document.getElementById('reminderStatus');
-  const times  = document.getElementById('reminderTimes');
-
-  if (!toggle.checked) {
-    // Turn off
-    clearInterval(reminderInterval);
-    reminderInterval = null;
-    times.classList.remove('active');
-    status.classList.remove('active');
-    localStorage.setItem('reminders_enabled', '0');
-    return;
-  }
-
-  // Request permission
-  if (!('Notification' in window)) {
-    status.textContent = '❌ Your browser does not support notifications.';
-    status.className = 'reminder-status active denied';
-    toggle.checked = false;
-    return;
-  }
-
-  let permission = Notification.permission;
-  if (permission === 'default') {
-    permission = await Notification.requestPermission();
-  }
-
-  if (permission === 'granted') {
-    times.classList.add('active');
-    status.textContent = '✅ Reminders enabled! You will be notified at 8 AM, 1 PM, and 7 PM daily.';
-    status.className = 'reminder-status active granted';
-    localStorage.setItem('reminders_enabled', '1');
-    startReminderChecker();
-    showToast('🔔 Reminders On!', 'You will be notified at meal times daily.');
-  } else {
-    toggle.checked = false;
-    times.classList.remove('active');
-    status.textContent = '❌ Notification permission denied. Please allow notifications in your browser settings.';
-    status.className = 'reminder-status active denied';
+// ══════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════
+function init() {
+  initTheme();
+  // Restore session
+  const savedToken = localStorage.getItem('nf_token');
+  const savedUser  = localStorage.getItem('nf_user');
+  if (savedToken && savedUser) {
+    authToken   = savedToken;
+    currentUser = JSON.parse(savedUser);
+    enterApp(currentUser);
   }
 }
 
-function startReminderChecker() {
-  // Clear any existing checker
-  if (reminderInterval) clearInterval(reminderInterval);
-
-  // Check every minute if a reminder should fire
-  reminderInterval = setInterval(() => {
-    const now = new Date();
-    const h = now.getHours();
-    const m = now.getMinutes();
-
-    REMINDERS.forEach(r => {
-      if (r.hour === h && r.minute === m) {
-        fireReminder(r);
-      }
-    });
-  }, 60000); // check every 60 seconds
-}
-
-function fireReminder(reminder) {
-  // Native browser notification
-  if (Notification.permission === 'granted') {
-    const notif = new Notification(reminder.title, {
-      body: reminder.body,
-      icon: '/icons/icon-192.png',
-      badge: '/icons/icon-192.png',
-      tag: 'meal-reminder',
-      renotify: true,
-    });
-    notif.onclick = () => { window.focus(); notif.close(); };
-  }
-
-  // Also show in-app toast (visible even if notifications blocked)
-  showToast(reminder.title, reminder.body);
-}
-
-// ── In-app toast notification ────────────────────────────
-let toastTimeout = null;
-function showToast(title, body) {
-  const toast = document.getElementById('notifToast');
-  document.getElementById('notifTitle').textContent = title;
-  document.getElementById('notifBody').textContent  = body;
-  toast.classList.add('active');
-
-  if (toastTimeout) clearTimeout(toastTimeout);
-  toastTimeout = setTimeout(() => toast.classList.remove('active'), 5000);
-}
-
-// ── Restore reminder state on page load ──────────────────
-function initReminders() {
-  const enabled = localStorage.getItem('reminders_enabled') === '1';
-  if (enabled && Notification.permission === 'granted') {
-    document.getElementById('reminderToggle').checked = true;
-    document.getElementById('reminderTimes').classList.add('active');
-    const status = document.getElementById('reminderStatus');
-    status.textContent = '✅ Reminders active — 8 AM, 1 PM, 7 PM daily.';
-    status.className = 'reminder-status active granted';
-    startReminderChecker();
-  }
-}
-
+init();
 </script>
 </body>
 </html>
