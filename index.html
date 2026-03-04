@@ -1048,7 +1048,7 @@ textarea:focus { border-color: var(--accent); background: var(--surface); box-sh
   </nav>
 
   <div class="landing-hero">
-    <div class="hero-eyebrow"> AI-Powered Nutrition</div>
+    <div class="hero-eyebrow">🌿 AI-Powered Nutrition</div>
     <h1>Eat <em>smarter</em>,<br/>live <strong>healthier</strong></h1>
     <p>Tell NutriFlow what you ate and our AI plans your remaining meals for a perfectly balanced day — personalised to your diet, goals and taste.</p>
 
@@ -1211,7 +1211,7 @@ textarea:focus { border-color: var(--accent); background: var(--surface); box-sh
         <!-- Results -->
         <div class="results-wrap" id="resultsWrap">
           <div class="results-header">
-            <div class="sub"> Your Personalised Plan</div>
+            <div class="sub">✅ Your Personalised Plan</div>
             <h2 id="resultsTitle">Based on your <em>morning meal</em></h2>
             <div class="results-diet-tag veg" id="resultsDietTag">🥦 Vegetarian</div>
           </div>
@@ -1258,7 +1258,7 @@ textarea:focus { border-color: var(--accent); background: var(--surface); box-sh
           </div>
           <div class="profile-name" id="profileName">—</div>
           <div class="profile-email" id="profileEmail">—</div>
-          <div class="profile-badge"> NutriFlow Member</div>
+          <div class="profile-badge">🌿 NutriFlow Member</div>
         </div>
 
         <div class="profile-form-card">
@@ -1377,8 +1377,7 @@ textarea:focus { border-color: var(--accent); background: var(--surface); box-sh
 // ══════════════════════════════════════════════════════════════
 // CONFIG
 // ══════════════════════════════════════════════════════════════
-// const BACKEND_URL   = 'http://localhost:8000';
-const BACKEND_URL='https://nutriflow-s4bm.onrender.com';
+const BACKEND_URL   = 'https://nutriflow-s4bm.onrender.com';
 const GOOGLE_CLIENT = '321739829551-tejlo5e521h07misggglinhvdsdbhup6.apps.googleusercontent.com';
 
 // ══════════════════════════════════════════════════════════════
@@ -1426,91 +1425,29 @@ function initTheme() {
 // ══════════════════════════════════════════════════════════════
 // GOOGLE AUTH
 // ══════════════════════════════════════════════════════════════
-// function triggerGoogleLogin() {
-//   google.accounts.id.initialize({
-//     client_id: GOOGLE_CLIENT,
-//     callback: handleGoogleResponse,
-//     auto_select: false,
-//   });
-//   google.accounts.id.prompt((notification) => {
-//     if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-//       // Fallback: show one-tap manually
-//       google.accounts.id.renderButton(
-//         document.createElement('div'),
-//         { theme: 'outline', size: 'large' }
-//       );
-//       // Force popup
-//       google.accounts.oauth2.initTokenClient({
-//         client_id: GOOGLE_CLIENT,
-//         scope: 'email profile openid',
-//         callback: () => {},
-//       });
-//     }
-//   });
-// }
 function triggerGoogleLogin() {
-  const width  = 500, height = 600;
-  const left   = window.screenX + (window.outerWidth  - width)  / 2;
-  const top    = window.screenY + (window.outerHeight - height) / 2;
-
-  const params = new URLSearchParams({
-    client_id:     GOOGLE_CLIENT,
-    redirect_uri:  'http://127.0.0.1:5500',
-    response_type: 'token id_token',
-    scope:         'openid email profile',
-    nonce:         Math.random().toString(36),
-    prompt:        'select_account',
+  google.accounts.id.initialize({
+    client_id: GOOGLE_CLIENT,
+    callback: handleGoogleResponse,
+    auto_select: false,
   });
-
-  const popup = window.open(
-    'https://accounts.google.com/o/oauth2/v2/auth?' + params,
-    'googleLogin',
-    `width=${width},height=${height},left=${left},top=${top}`
-  );
-
-  // Poll popup for redirect
-  const timer = setInterval(() => {
-    try {
-      const url = popup.location.href;
-      if (url.startsWith('http://127.0.0.1:5500')) {
-        clearInterval(timer);
-        popup.close();
-        // Extract id_token from URL fragment
-        const hash   = new URLSearchParams(popup.location.hash.slice(1));
-        const fragment = new URLSearchParams(url.split('#')[1]);
-        const idToken = fragment.get('id_token');
-        if (idToken) {
-          handleGoogleResponse({ credential: idToken });
-        } else {
-          showToast(' Login failed', 'Could not get token from Google');
-        }
-      }
-    } catch(e) {
-      // Cross-origin — popup still on Google page, keep waiting
+  google.accounts.id.prompt((notification) => {
+    if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+      // Fallback: show one-tap manually
+      google.accounts.id.renderButton(
+        document.createElement('div'),
+        { theme: 'outline', size: 'large' }
+      );
+      // Force popup
+      google.accounts.oauth2.initTokenClient({
+        client_id: GOOGLE_CLIENT,
+        scope: 'email profile openid',
+        callback: () => {},
+      });
     }
-    if (popup.closed) clearInterval(timer);
-  }, 500);
+  });
 }
 
-async function handleGoogleResponse(response) {
-  try {
-    showToast('⏳ Signing in…', 'Verifying your Google account');
-    const res = await fetch(`${BACKEND_URL}/auth/google`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token: response.credential })
-    });
-    if (!res.ok) throw new Error('Auth failed');
-    const data = await res.json();
-    authToken   = data.token;
-    currentUser = data;
-    localStorage.setItem('nf_token', authToken);
-    localStorage.setItem('nf_user',  JSON.stringify(data));
-    enterApp(data);
-  } catch (err) {
-    showToast(' Sign in failed', err.message);
-  }
-}
 async function handleGoogleResponse(response) {
   try {
     showToast('⏳ Signing in…', 'Verifying your Google account');
@@ -1527,7 +1464,7 @@ async function handleGoogleResponse(response) {
     localStorage.setItem('nf_user',    JSON.stringify(data));
     enterApp(data);
   } catch (err) {
-    showToast(' Sign in failed', err.message);
+    showToast('❌ Sign in failed', err.message);
   }
 }
 
@@ -1561,7 +1498,7 @@ function signOut() {
   localStorage.removeItem('nf_user');
   document.getElementById('appPage').classList.remove('active');
   document.getElementById('landingPage').classList.add('active');
-  showToast(' Signed out', 'See you next time!');
+  showToast('👋 Signed out', 'See you next time!');
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1759,7 +1696,7 @@ function renderHistory() {
     const hasLogged = dayMeals.length > 0;
 
     const badgeClass = isToday ? 'today' : hasLogged ? 'logged' : 'missed';
-    const badgeText  = isToday ? ' Today' : hasLogged ? ` ${dayMeals.length} logged` : isFuture ? '—' : 'Not logged';
+    const badgeText  = isToday ? '📍 Today' : hasLogged ? `✅ ${dayMeals.length} logged` : isFuture ? '—' : 'Not logged';
 
     const mealsHTML = dayMeals.length > 0
       ? dayMeals.map(m => {
@@ -1774,7 +1711,7 @@ function renderHistory() {
             </div>
           </div>`;
         }).join('')
-      : `<div class="no-meals-placeholder">${isFuture ? ' Future day' : ' No meals logged'}</div>`;
+      : `<div class="no-meals-placeholder">${isFuture ? '🔮 Future day' : '😴 No meals logged'}</div>`;
 
     const card = document.createElement('div');
     card.className = 'history-day-card';
@@ -1892,8 +1829,8 @@ async function saveProfile() {
       headers: { 'Content-Type':'application/json', 'Authorization':`Bearer ${authToken}` },
       body: JSON.stringify(body)
     });
-    showToast(' Profile saved!', 'Your details have been updated.');
-  } catch(e) { showToast(' Save failed', e.message); }
+    showToast('✅ Profile saved!', 'Your details have been updated.');
+  } catch(e) { showToast('❌ Save failed', e.message); }
 }
 
 function calcBMI() {
@@ -1920,7 +1857,7 @@ async function toggleReminders() {
   if (perm==='granted') {
     localStorage.setItem('nf_reminders','1');
     startReminderChecker();
-    showToast(' Reminders on!','You will be notified at 8 AM, 1 PM and 7 PM.');
+    showToast('🔔 Reminders on!','You will be notified at 8 AM, 1 PM and 7 PM.');
   } else { toggle.checked=false; }
 }
 
